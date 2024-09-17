@@ -158,15 +158,15 @@
 
         <ImageView
             android:id="@+id/ranking_box"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/match_text_box"
             android:scaleType="fitXY"
             android:adjustViewBounds="true" />
 
         <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:fillViewport="true">
 
@@ -174,8 +174,9 @@
                 android:id="@+id/ranking_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:maxHeight="200dp"
+                android:maxHeight="130dp"
                 android:textSize="16sp"
+                android:scrollbars="vertical"
                 android:textColor="#000000" />
         </ScrollView>
 

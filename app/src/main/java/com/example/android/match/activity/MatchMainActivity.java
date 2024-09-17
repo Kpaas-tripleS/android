@@ -55,7 +55,7 @@ public class MatchMainActivity extends AppCompatActivity {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .addInterceptor(chain -> {
                     Request request = chain.request().newBuilder()
-                            .addHeader("Authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MjY1MDA5MjUsImV4cCI6MTcyNjUwNDUyNSwiaXNzIjoidHJpcGxlcyIsInN1YiI6IjEiLCJyb2xlIjoiQURNSU4ifQ.oMk-Y_m5KugB8yB7FQ2OvFOi-g0e5tP19Jug7zQJuwlkZ9-H_AxSi8FYE9pMNAJvpSVgulz4YQO8b87p8NQMhw")
+                            .addHeader("Authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MjY1NTgzNjQsImV4cCI6MTcyNjU2MTk2NCwiaXNzIjoidHJpcGxlcyIsInN1YiI6IjEiLCJyb2xlIjoiQURNSU4ifQ.z-5P9h0otvOiq76RLCxIdgpjDbdpLFHJ_hWctmeiSPigJ2VNflnkpH0nvbSySv6OzlI4vNBctnqoUrEli03hgg")
                             .build();
                     return chain.proceed(request);
                 })
@@ -116,7 +116,7 @@ public class MatchMainActivity extends AppCompatActivity {
         });
 
 
-        /*ranking_text = findViewById(R.id.ranking_text);
+        ranking_text = findViewById(R.id.ranking_text);
         all_rank_button = findViewById(R.id.all_rank);
         all_rank_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,7 +131,7 @@ public class MatchMainActivity extends AppCompatActivity {
                             List<UserResponse> allRanking = results.getRankingResponseList();
                             int i = 1;
                             for(UserResponse ranking : allRanking) {
-                                String content = i + " " + ranking.getNickname() + "\n\n";
+                                String content = i + "  " + ranking.getNickname() + "\n";
                                 ranking_text.append(content);
                                 i++;
                             }
@@ -162,7 +162,7 @@ public class MatchMainActivity extends AppCompatActivity {
                             List<UserResponse> friendRanking = results.getRankingResponseList();
                             int i = 1;
                             for(UserResponse ranking : friendRanking) {
-                                String content = i + " " + ranking.getNickname() + "\n\n";
+                                String content = i + " " + ranking.getNickname() + "\n";
                                 ranking_text.append(content);
                                 i++;
                             }
@@ -180,7 +180,7 @@ public class MatchMainActivity extends AppCompatActivity {
                 });
             }
         });
-        all_rank_button.performClick();*/
+        all_rank_button.performClick();
 
 
     }
