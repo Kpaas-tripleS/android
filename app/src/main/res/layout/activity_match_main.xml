@@ -115,7 +115,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.58">
-
         <ImageButton
             android:id="@+id/all_rank"
             android:layout_width="wrap_content"
@@ -123,7 +122,6 @@
             android:background="@null"
             android:contentDescription="AllRankButton"
             android:src="@drawable/match_all_rank" />
-
     </FrameLayout>
 
     <FrameLayout
@@ -135,7 +133,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.58">
-
         <ImageButton
             android:id="@+id/friend__rank"
             android:layout_width="wrap_content"
@@ -143,7 +140,6 @@
             android:background="@null"
             android:contentDescription="AllRankButton"
             android:src="@drawable/match_friend_rank" />
-
     </FrameLayout>
 
     <FrameLayout
@@ -155,7 +151,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.823">
-
         <ImageView
             android:id="@+id/ranking_box"
             android:layout_width="wrap_content"
@@ -163,13 +158,11 @@
             android:src="@drawable/match_text_box"
             android:scaleType="fitXY"
             android:adjustViewBounds="true" />
-
         <ScrollView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:fillViewport="true">
-
             <TextView
                 android:id="@+id/ranking_text"
                 android:layout_width="wrap_content"
@@ -179,7 +172,77 @@
                 android:scrollbars="vertical"
                 android:textColor="#000000" />
         </ScrollView>
-
     </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:id="@+id/match_check_toast"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.473">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/match_check_toast" />
+        <ImageButton
+            android:id="@+id/match_check_accept"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:src="@drawable/match_check_accept"
+            android:translationX="60dp"
+            android:translationY="90dp" />
+        <ImageButton
+            android:id="@+id/match_check_reject"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:src="@drawable/match_check_reject"
+            android:translationX="110dp"
+            android:translationY="90dp" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/match_fail_toast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.473">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/match_fail_toast" />
+    </FrameLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/match_random_loading"
+        android:visibility="gone">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/match_random_loading"
+            android:scaleType="centerCrop" />
+        <ImageButton
+            android:id="@+id/match_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:src="@drawable/match_delete"
+            android:translationX="350dp"
+            android:translationY="20dp"
+            tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
