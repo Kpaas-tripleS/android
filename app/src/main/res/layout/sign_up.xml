@@ -6,16 +6,32 @@
     android:background= "@drawable/triples_background" >
 
     <EditText
-        android:id="@+id/phone"
+        android:id="@+id/nickname"
         android:layout_width="310dp"
         android:layout_height="40dp"
         android:layout_marginTop="36dp"
         android:background="@drawable/button_background"
-        android:hint="  전화번호를 입력하세요."
         android:gravity="center"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:hint="  닉네임를 입력하세요."
         android:textColor="@android:color/darker_gray"
         app:backgroundTint="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.485"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/email" />
+
+    <EditText
+        android:id="@+id/phone"
+        android:layout_width="310dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/button_background"
+        android:gravity="center"
+        android:hint="  전화번호를 입력하세요."
+        android:textColor="@android:color/darker_gray"
+        app:backgroundTint="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/nickname" />
 
@@ -23,70 +39,60 @@
         android:id="@+id/email"
         android:layout_width="310dp"
         android:layout_height="40dp"
+        android:layout_marginTop="32dp"
         android:background="@drawable/button_background"
-        android:layout_marginTop="28dp"
+        android:gravity="center"
         android:hint="  이메일을 입력하세요."
-        android:gravity="center"
-        app:layout_constraintEnd_toEndOf="parent"
         android:textColor="@android:color/darker_gray"
         app:backgroundTint="@android:color/white"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/pw" />
-
-    <EditText
-        android:id="@+id/nickname"
-        android:layout_width="310dp"
-        android:layout_height="40dp"
-        android:background="@drawable/button_background"
-        android:layout_marginTop="44dp"
-        android:hint="  비밀번호를 입력하세요."
-        android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
-        android:textColor="@android:color/darker_gray"
-        app:backgroundTint="@android:color/white"
+        app:layout_constraintHorizontal_bias="0.485"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/email" />
+        app:layout_constraintTop_toBottomOf="@id/password" />
 
     <EditText
-        android:id="@+id/id"
+        android:id="@+id/name"
         android:layout_width="310dp"
         android:layout_height="40dp"
+        android:layout_marginTop="104dp"
         android:background="@drawable/button_background"
-        android:layout_marginTop="248dp"
+        android:gravity="center"
         android:hint="  아이디를 입력하세요."
-        android:gravity="center"
-        app:layout_constraintEnd_toEndOf="parent"
         android:textColor="@android:color/darker_gray"
         app:backgroundTint="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/pw"
+        android:id="@+id/password"
         android:layout_width="310dp"
         android:layout_height="40dp"
+        android:layout_marginTop="36dp"
         android:background="@drawable/button_background"
-        android:layout_marginTop="40dp"
-        android:hint="  비밀번호를 입력하세요."
         android:gravity="center"
+        android:hint="  비밀번호를 입력하세요."
         android:textColor="@android:color/darker_gray"
         app:backgroundTint="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/id" />
+        app:layout_constraintTop_toBottomOf="@id/name" />
 
     <Button
         android:id="@+id/finish"
         android:layout_width="150dp"
         android:layout_height="40dp"
-        android:background="@drawable/button_background"
         android:layout_marginTop="304dp"
+        android:background="@drawable/button_background"
         android:text="완료"
-        app:layout_constraintEnd_toEndOf="parent"
         android:textColor="@android:color/black"
         app:backgroundTint="@color/app_base_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/pw" />
+        app:layout_constraintTop_toBottomOf="@id/password" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
