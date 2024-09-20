@@ -1,7 +1,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.Android" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
-    </style>
+
+<!--    &lt;!&ndash; 앱 메인 색깔 이용한 버튼 style 지정&ndash;&gt;-->
+<!--    <style name="CustomButton" parent="Widget.Material3.Button">-->
+<!--        <item name="android:background">@color/app_base_color</item>-->
+<!--        <item name="android:textColor">@android:color/white</item>-->
+<!--    </style>-->
+
 </resources>
