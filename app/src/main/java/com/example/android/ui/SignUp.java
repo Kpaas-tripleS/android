@@ -63,7 +63,6 @@ public class SignUp extends AppCompatActivity {
                             public void onResponse(Call<Void> call, Response<Void> response) {
                                 if (response.isSuccessful()) {
                                     Toast.makeText(SignUp.this, "회원가입 성공!", Toast.LENGTH_SHORT).show();
-                                    // 회원가입 성공 후 다음 작업을 수행할 수 있습니다.
                                 } else {
                                     String errorMessage = "";
                                     try {
