@@ -29,6 +29,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MatchResultActivity extends AppCompatActivity {
 
+    private final String token = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MjY5NDA1OTQsImV4cCI6MTcyNjk0NDE5NCwiaXNzIjoidHJpcGxlcyIsInN1YiI6IjEiLCJyb2xlIjoiQURNSU4ifQ.Q-rUrRLBPyOQF-k3TTXKZno18vM9RLIj8xEzierwh2dhvsSeGXlbMGjvlFx76bWs1RORhpIXLEvbpSmE5sfmfw";
     private MatchAPI matchAPI;
     private Long matchId;
     private ImageView player_profile;
@@ -53,7 +54,7 @@ public class MatchResultActivity extends AppCompatActivity {
         OkHttpClient okHttpClient = new OkHttpClient.Builder() //임시 토큰
                 .addInterceptor(chain -> {
                     Request request = chain.request().newBuilder()
-                            .addHeader("Authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MjY4Mjc3ODYsImV4cCI6MTcyNjgzMTM4NiwiaXNzIjoidHJpcGxlcyIsInN1YiI6IjEiLCJyb2xlIjoiQURNSU4ifQ.ix-eI8alZKxfCPGTL9UDHTtZs-KDI0fqs_X6USvAhotD59ETI4qoa6N7rGjes0CMRvev82DaakEMmEh9nc5b7Q")
+                            .addHeader("Authorization", token)
                             .build();
                     return chain.proceed(request);
                 })

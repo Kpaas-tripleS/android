@@ -12,7 +12,6 @@ public class ResponseTemplate<T> {
     @SerializedName("results")
     private T results;
 
-    // Getters and setters
     public Boolean getIsSuccess() {
         return isSuccess;
     }

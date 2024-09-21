@@ -26,17 +26,11 @@ public interface MatchAPI {
     @POST("matches/{matchId}/reject")
     Call<ResponseTemplate<Void>> rejectMatch(@Path("matchId") Long matchId);
 
-    /*@GET("/matches/{matchId}/status")
-    Call<ResponseTemplate<Void>> matchStatus(@Path("matchId") Long matchId);
-
-    @POST("/matches/{matchId}/start")
-    Call<ResponseTemplate<Void>> startMatch(@Path("matchId") Long matchId);*/
-
     @DELETE("/matches/{matchId}")
     Call<ResponseTemplate<Void>> deleteMatch(@Path("matchId") Long matchId);
 
     @POST("/matches/{matchId}/quiz/{quizId}/answer")
-    Call<ResponseTemplate<Void>> checkQuizForMatch(@Path("matchId") Long matchId, @Path("quizId") Long quizId, String userAnswer);
+    Call<ResponseTemplate<Void>> checkQuizForMatch(@Path("matchId") Long matchId, @Path("quizId") Long quizId, @Body String userAnswer);
 
     @GET("/matches/{matchId}/result")
     Call<ResponseTemplate<MatchResultResponse>> resultQuizForMatch(@Path("matchId") Long matchId);
