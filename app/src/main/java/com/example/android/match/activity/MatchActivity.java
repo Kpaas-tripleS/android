@@ -18,10 +18,8 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.android.R;
 import com.example.android.global.dto.response.ResponseTemplate;
 import com.example.android.match.API.MatchAPI;
-import com.example.android.match.config.StompClientConfig;
 import com.example.android.match.dto.QuizDto;
 import com.example.android.match.dto.response.MatchStartResponse;
-import com.example.android.match.util.MessageCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +29,8 @@ import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import ua.naiksoftware.stomp.Stomp;
@@ -38,9 +38,11 @@ import ua.naiksoftware.stomp.dto.StompHeader;
 
 public class MatchActivity extends AppCompatActivity {
 
+    private final String token = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MjY5NDA1OTQsImV4cCI6MTcyNjk0NDE5NCwiaXNzIjoidHJpcGxlcyIsInN1YiI6IjEiLCJyb2xlIjoiQURNSU4ifQ.Q-rUrRLBPyOQF-k3TTXKZno18vM9RLIj8xEzierwh2dhvsSeGXlbMGjvlFx76bWs1RORhpIXLEvbpSmE5sfmfw";
     private ua.naiksoftware.stomp.StompClient stompClient;
     private ViewGroup rootView;
     private Long matchId;
+    private String url;
     private boolean clickAnswer;
     private MatchAPI matchAPI;
     private int quizNumber;
@@ -73,7 +75,7 @@ public class MatchActivity extends AppCompatActivity {
         OkHttpClient okHttpClient = new OkHttpClient.Builder() //임시 토큰
                 .addInterceptor(chain -> {
                     Request request = chain.request().newBuilder()
-                            .addHeader("Authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MjY4Mjc3ODYsImV4cCI6MTcyNjgzMTM4NiwiaXNzIjoidHJpcGxlcyIsInN1YiI6IjEiLCJyb2xlIjoiQURNSU4ifQ.ix-eI8alZKxfCPGTL9UDHTtZs-KDI0fqs_X6USvAhotD59ETI4qoa6N7rGjes0CMRvev82DaakEMmEh9nc5b7Q")
+                            .addHeader("Authorization", token)
                             .build();
                     return chain.proceed(request);
                 })
@@ -85,18 +87,11 @@ public class MatchActivity extends AppCompatActivity {
                 .client(okHttpClient)
                 .build();
 
-        startStomp();
         Intent intent = getIntent();
         matchInfo = intent.getParcelableExtra("MATCH_START_RESPONSE");
         matchId = intent.getLongExtra("MATCH_ID", 0);
-        if(stompClient.isConnected()) {
-            stompClient.topic("/topic/matches/" + matchId).subscribe(topicMessage -> {
-                handleStomp(topicMessage.getPayload());
-            }, throwable -> {
-                // onError handler
-                Log.e("WebSocket", "Error sending message: " + throwable.getMessage());
-            });
-        }
+        url = "/topic/matches/" + matchId;
+        startStomp();
         matchAPI = retrofit.create(MatchAPI.class);
 
         player_name_text = findViewById(R.id.player_name_text);
@@ -124,28 +119,28 @@ public class MatchActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 clickAnswer = true;
-                Call<ResponseTemplate<Void>> call = matchAPI.checkQuizForMatch(matchId, quizzes.get(quizNumber).getQuizId(), answer_one.getText().toString());
+                Call<ResponseTemplate<Void>> call = matchAPI.checkQuizForMatch(matchId, quizzes.get(quizNumber).getQuizId(), quizzes.get(quizNumber).getChoiceOne());
             }
         });
         answer_container_two.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 clickAnswer = true;
-                Call<ResponseTemplate<Void>> call = matchAPI.checkQuizForMatch(matchId, quizzes.get(quizNumber).getQuizId(), answer_two.getText().toString());
+                Call<ResponseTemplate<Void>> call = matchAPI.checkQuizForMatch(matchId, quizzes.get(quizNumber).getQuizId(), quizzes.get(quizNumber).getChoiceTwo());
             }
         });
         answer_container_three.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 clickAnswer = true;
-                Call<ResponseTemplate<Void>> call = matchAPI.checkQuizForMatch(matchId, quizzes.get(quizNumber).getQuizId(), answer_three.getText().toString());
+                Call<ResponseTemplate<Void>> call = matchAPI.checkQuizForMatch(matchId, quizzes.get(quizNumber).getQuizId(), quizzes.get(quizNumber).getChoiceThree());
             }
         });
         answer_container_four.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 clickAnswer = true;
-                Call<ResponseTemplate<Void>> call = matchAPI.checkQuizForMatch(matchId, quizzes.get(quizNumber).getQuizId(), answer_four.getText().toString());
+                Call<ResponseTemplate<Void>> call = matchAPI.checkQuizForMatch(matchId, quizzes.get(quizNumber).getQuizId(), quizzes.get(quizNumber).getChoiceFour());
             }
         });
 
@@ -154,9 +149,8 @@ public class MatchActivity extends AppCompatActivity {
     private void startStomp() {
         stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, "ws://10.0.2.2:8080/ws");
         List<StompHeader> headers = new ArrayList<>();
-        headers.add(new StompHeader("Authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MjY4Mjc3ODYsImV4cCI6MTcyNjgzMTM4NiwiaXNzIjoidHJpcGxlcyIsInN1YiI6IjEiLCJyb2xlIjoiQURNSU4ifQ.ix-eI8alZKxfCPGTL9UDHTtZs-KDI0fqs_X6USvAhotD59ETI4qoa6N7rGjes0CMRvev82DaakEMmEh9nc5b7Q"));
+        headers.add(new StompHeader("Authorization", token));
         stompClient.connect(headers);
-        //stompClient.connect();
         stompClient.lifecycle()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -164,6 +158,7 @@ public class MatchActivity extends AppCompatActivity {
                     switch (lifecycleEvent.getType()) {
                         case OPENED:
                             System.out.println("WebSocket 연결 성공");
+                            subscribeToTopic();
                             break;
                         case ERROR:
                             System.err.println("WebSocket 오류: " + lifecycleEvent.getException());
@@ -174,6 +169,16 @@ public class MatchActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    private void subscribeToTopic() {
+        stompClient.topic(url).subscribe(topicMessage -> {
+            handleStomp(topicMessage.getPayload());
+        }, throwable -> {
+            // onError handler
+            Log.e("WebSocket", "Error sending message: " + throwable.getMessage());
+        });
+    }
+
     private void handleStomp(String message) {
         if(message.equals("QUIZ_RIGHT")) {
             clickAnswer = false;
@@ -186,50 +191,44 @@ public class MatchActivity extends AppCompatActivity {
             clickAnswer = false;
             handleQuizWrong();
         }
-        /*stompClient.connectStomp();
-        stompClient.setMessageCallback(new MessageCallback() {
-            @Override
-            public void onMessageReceived(Object message) {
-                if (message instanceof String) {
-                    if(message.equals("QUIZ_RIGHT")) {
-                        clickAnswer = false;
-                        if(quizNumber == (quizzes.size() - 1))
-                            finishQuiz();
-                        else
-                            handleQuizRight();
-                    }
-                    else if(message.equals("QUIZ_WRONG") && clickAnswer) {
-                        clickAnswer = false;
-                        handleQuizWrong();
-                    }
-                }
-            }
-            @Override
-            public void onError(Throwable throwable) {
-                System.err.println("구독 오류: " + throwable.getMessage());
-            }
-        });*/
     }
 
     private void showQuiz() {
         QuizDto quiz = quizzes.get(quizNumber);
-        quiz_text.setText(quiz.getQuestion());
-        answer_one.setText(quiz.getChoiceOne());
-        answer_two.setText(quiz.getChoiceTwo());
-        answer_three.setText(quiz.getChoiceThree());
-        answer_four.setText(quiz.getChoiceFour());
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                quiz_text.setText(quiz.getQuestion());
+                answer_one.setText(quiz.getChoiceOne());
+                answer_two.setText(quiz.getChoiceTwo());
+                answer_three.setText(quiz.getChoiceThree());
+                answer_four.setText(quiz.getChoiceFour());
+            }
+        });
     }
 
     private void handleQuizRight() {
-        quizNumber++;
-        showQuiz();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                quizNumber++;
+                showQuiz();
+            }
+        });
     }
 
     private void handleQuizWrong() {
-        wait_toast.setVisibility(View.VISIBLE);
-        rootView.setEnabled(false);
-        new Handler().postDelayed(() -> rootView.setEnabled(true), 2000);
-        wait_toast.setVisibility(View.GONE);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                wait_toast.setVisibility(View.VISIBLE);
+                rootView.setEnabled(false);
+                new Handler().postDelayed(() -> {
+                    wait_toast.setVisibility(View.GONE);
+                    rootView.setEnabled(true);
+                }, 2000);
+            }
+        });
     }
 
     private void finishQuiz() {

@@ -19,14 +19,12 @@ import com.example.android.R;
 import com.example.android.global.dto.response.ResponseTemplate;
 import com.example.android.match.API.MatchAPI;
 import com.example.android.match.API.RankingAPI;
-import com.example.android.match.config.StompClientConfig;
 import com.example.android.match.dto.request.MatchRequest;
 import com.example.android.match.dto.response.MatchResponse;
 import com.example.android.match.dto.response.MatchResponseList;
 import com.example.android.match.dto.response.MatchStartResponse;
 import com.example.android.match.dto.response.RankingResponseList;
 import com.example.android.match.dto.response.UserResponse;
-import com.example.android.match.util.MessageCallback;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -50,11 +48,13 @@ import ua.naiksoftware.stomp.dto.StompHeader;
 
 public class MatchMainActivity extends AppCompatActivity {
 
+    private final String token = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MjY5NDA1OTQsImV4cCI6MTcyNjk0NDE5NCwiaXNzIjoidHJpcGxlcyIsInN1YiI6IjEiLCJyb2xlIjoiQURNSU4ifQ.Q-rUrRLBPyOQF-k3TTXKZno18vM9RLIj8xEzierwh2dhvsSeGXlbMGjvlFx76bWs1RORhpIXLEvbpSmE5sfmfw";
     private ua.naiksoftware.stomp.StompClient stompClient;
     private int currentIndex;
     private List<MatchResponse> matchList;
     private Long matchId;
     private Long friendMatchId;
+    private String url;
     private MatchAPI matchAPI;
     private RankingAPI rankingAPI;
     private TextView match_list_name;
@@ -73,7 +73,6 @@ public class MatchMainActivity extends AppCompatActivity {
     private FrameLayout match_fail_toast;
     private RelativeLayout match_random_loading;
     private boolean friendMatch;
-    private boolean cancleMatch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +87,7 @@ public class MatchMainActivity extends AppCompatActivity {
         OkHttpClient okHttpClient = new OkHttpClient.Builder() //임시 토큰
                 .addInterceptor(chain -> {
                     Request request = chain.request().newBuilder()
-                            .addHeader("Authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MjY4Mjc3ODYsImV4cCI6MTcyNjgzMTM4NiwiaXNzIjoidHJpcGxlcyIsInN1YiI6IjEiLCJyb2xlIjoiQURNSU4ifQ.ix-eI8alZKxfCPGTL9UDHTtZs-KDI0fqs_X6USvAhotD59ETI4qoa6N7rGjes0CMRvev82DaakEMmEh9nc5b7Q")
+                            .addHeader("Authorization", token)
                             .build();
                     return chain.proceed(request);
                 })
@@ -117,7 +116,6 @@ public class MatchMainActivity extends AppCompatActivity {
         friend_rank_button = findViewById(R.id.friend__rank);
         match_fail_toast = findViewById(R.id.match_fail_toast);
         match_delete = findViewById(R.id.match_delete);
-        cancleMatch = false;
         currentIndex = 0;
 
 
@@ -133,17 +131,10 @@ public class MatchMainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<Long> call, Response<Long> response) {
                      if(response.isSuccessful()) {
-                         startStomp();
                          matchId = response.body();
-                         if(stompClient.isConnected()) {
-                             stompClient.topic("/topic/matches/" + matchId).subscribe(topicMessage -> {
-                                 handleStomp(topicMessage.getPayload());
-                             }, throwable -> {
-                                 // onError handler
-                                 Log.e("WebSocket", "Error sending message: " + throwable.getMessage());
-                             });
-                         }
+                         url = "/topic/matches/" + matchId;
                          match_random_loading.setVisibility(View.VISIBLE);
+                         startStomp();
                      }
                     }
                     @Override
@@ -162,7 +153,6 @@ public class MatchMainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<ResponseTemplate<Void>> call, Response<ResponseTemplate<Void>> response) {
                         if(response.isSuccessful()) {
-                            cancleMatch = true;
                             match_random_loading.setVisibility(View.GONE);
                             stompClient.disconnect();
                         }
@@ -182,10 +172,15 @@ public class MatchMainActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     MatchResponseList results = response.body().getResults();
                     matchList = results.getMatchResponseList();
-                    if (matchList != null) { //match가 없는 경우 만들어야함?
-                        MatchResponse match = matchList.get(currentIndex);
-                        match_list_name.setText(match.getLeader().getNickname());
-                        friendMatchId = match.getMatchId();
+                    if (matchList != null) {
+                        try {
+                            MatchResponse match = matchList.get(currentIndex);
+                            match_list_name.setText(match.getLeader().getNickname());
+                            friendMatchId = match.getMatchId();
+                        }
+                        catch (Exception e) {
+                            match_list_name.setText(""); //나중에 이름 옆에 이미지 넣기 - 디자인
+                        }
                     } else {
                         match_list_name.setText(""); //나중에 이름 옆에 이미지 넣기 - 디자인
                     }
@@ -241,15 +236,8 @@ public class MatchMainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(friendMatch) {
+                    url = "/topic/matches/" + friendMatchId;
                     startStomp();
-                    if(stompClient.isConnected()) {
-                        stompClient.topic("/topic/matches/" + friendMatchId).subscribe(topicMessage -> {
-                            handleStomp(topicMessage.getPayload());
-                        }, throwable -> {
-                            // onError handler
-                            Log.e("WebSocket", "Error sending message: " + throwable.getMessage());
-                        });
-                    }
                     Call<ResponseTemplate<Void>> call = matchAPI.acceptMatch(friendMatchId);
                     call.enqueue(new Callback<ResponseTemplate<Void>>() {
                         @Override
@@ -349,7 +337,7 @@ public class MatchMainActivity extends AppCompatActivity {
     private void startStomp() {
         stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, "ws://10.0.2.2:8080/ws");
         List<StompHeader> headers = new ArrayList<>();
-        headers.add(new StompHeader("Authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MjY4Mjc3ODYsImV4cCI6MTcyNjgzMTM4NiwiaXNzIjoidHJpcGxlcyIsInN1YiI6IjEiLCJyb2xlIjoiQURNSU4ifQ.ix-eI8alZKxfCPGTL9UDHTtZs-KDI0fqs_X6USvAhotD59ETI4qoa6N7rGjes0CMRvev82DaakEMmEh9nc5b7Q"));
+        headers.add(new StompHeader("Authorization", token));
         stompClient.connect(headers);
         //stompClient.connect();
         stompClient.lifecycle()
@@ -359,6 +347,7 @@ public class MatchMainActivity extends AppCompatActivity {
                     switch (lifecycleEvent.getType()) {
                         case OPENED:
                             System.out.println("WebSocket 연결 성공");
+                            subscribeToTopic();
                             break;
                         case ERROR:
                             System.err.println("WebSocket 오류: " + lifecycleEvent.getException());
@@ -368,24 +357,15 @@ public class MatchMainActivity extends AppCompatActivity {
                             break;
                     }
                 });
-        /*stompClient.setMessageCallback(new MessageCallback() {
-            @Override
-            public void onMessageReceived(Object message) {
-                if (message instanceof String) {
-                    String result = (String) message;
-                    if(result.equals("MATCH_FAIL"))
-                        handleMatchFail();
-                }
-                else { //if (message instanceof MatchStartResponse)
-                    MatchStartResponse result = (MatchStartResponse) message;
-                    handleMatchComplete(matchId, result);
-                }
-            }
-            @Override
-            public void onError(Throwable throwable) {
-                System.err.println("구독 오류: " + throwable.getMessage());
-            }
-        }); */
+    }
+
+    private void subscribeToTopic() {
+        stompClient.topic(url).subscribe(topicMessage -> {
+            handleStomp(topicMessage.getPayload());
+        }, throwable -> {
+            // onError handler
+            Log.e("WebSocket", "Error sending message: " + throwable.getMessage());
+        });
     }
 
     private void handleStomp(String message) {
@@ -405,22 +385,30 @@ public class MatchMainActivity extends AppCompatActivity {
 
     private void handleMatchComplete(Long matchId,MatchStartResponse result) {
         Intent intent = new Intent(this, MatchActivity.class);
-        intent.putExtra("MATCH_ID", matchId);
+        if(friendMatch)
+            intent.putExtra("MATCH_ID", friendMatchId);
+        else
+            intent.putExtra("MATCH_ID", matchId);
         intent.putExtra("MATCH_START_RESPONSE", result);
         stompClient.disconnect();
         startActivity(intent);
     }
 
     private void handleMatchFail() {
-        stompClient.disconnect();
-        match_random_loading.setVisibility(View.GONE);
-        match_fail_toast.setVisibility(View.VISIBLE);
-        new Handler().postDelayed(new Runnable() {
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                match_fail_toast.setVisibility(View.GONE);
+                match_random_loading.setVisibility(View.GONE);
+                match_fail_toast.setVisibility(View.VISIBLE);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        match_fail_toast.setVisibility(View.GONE);
+                    }
+                }, 2000);
             }
-        }, 2000);
+        });
+        stompClient.disconnect();
     }
 
 }
