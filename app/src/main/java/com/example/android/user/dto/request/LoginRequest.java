@@ -1,4 +1,4 @@
-package com.example.android.dto.request;
+package com.example.android.user.dto.request;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -12,6 +12,9 @@ public class LoginRequest {
 
     @SerializedName("password")
     private String password;
+
+    @SerializedName("token") // Add token field
+    private String token;
 
     public LoginRequest(String nickname, String email, String password) {
         this.nickname = nickname;

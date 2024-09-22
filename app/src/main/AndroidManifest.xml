@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- 인터넷 권한 -->
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
@@ -16,48 +17,37 @@
         android:theme="@style/Theme.Android"
         tools:targetApi="31">
 
-        <activity
-            android:name=".ui.MainActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".ui.Login"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".ui.SignUp"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".ui.Befriend"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
         <meta-data
-            android:name="NATIVE_APP_KEY"
+            android:name="com.kakao.sdk.AppKey"
             android:value="f4360ed6d5169b705e8dbe21b0695ace" />
 
         <activity
-            android:name=".ui.global.GlobalApplication" />
+            android:name=".main.ui.MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".user.ui.Login"
+            android:exported="true">
+            <!-- intent-filter 제거 -->
+        </activity>
+
+        <activity
+            android:name=".user.ui.SignUp"
+            android:exported="true">
+        </activity>
+
+        <activity
+            android:name=".friend.ui.Befriend"
+            android:exported="true">
+        </activity>
+
+        <activity
+            android:name=".global.KakaoInit" />
 
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
@@ -68,7 +58,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:host="oauth"
-                    android:scheme="kakaof4360ed6d5169b705e8dbe21b0695ace" />
+                    android:scheme="com.example.android" /> <!-- scheme 수정 -->
             </intent-filter>
         </activity>
 

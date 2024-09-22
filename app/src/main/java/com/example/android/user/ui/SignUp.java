@@ -1,4 +1,4 @@
-package com.example.android.ui;
+package com.example.android.user.ui;
 
 import android.os.Bundle;
 import android.view.View;
@@ -9,9 +9,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.android.R;
-import com.example.android.ui.global.RetrofitClient;
-import com.example.android.api.UserApi;
-import com.example.android.dto.request.SignUpRequest;
+import com.example.android.global.RetrofitClient;
+import com.example.android.user.api.UserApi;
+import com.example.android.user.dto.request.SignUpRequest;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,7 +39,7 @@ public class SignUp extends AppCompatActivity {
         phoneEditText = findViewById(R.id.phone);
         signUpButton = findViewById(R.id.finish);
 
-        userApi = RetrofitClient.getInstance().getApiService();
+        userApi = RetrofitClient.getInstance(this).getUserApi();
 
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override

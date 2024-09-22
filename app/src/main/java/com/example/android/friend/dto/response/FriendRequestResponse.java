@@ -1,4 +1,4 @@
-package com.example.android.dto;
+package com.example.android.friend.dto.response;
 
 import com.google.gson.annotations.SerializedName;
 import java.util.List;
