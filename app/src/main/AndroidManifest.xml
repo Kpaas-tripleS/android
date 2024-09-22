@@ -15,12 +15,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Android"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
 
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="f4360ed6d5169b705e8dbe21b0695ace" />
 
+        <activity
+            android:name=".match.activity.MatchResultActivity"
+            android:exported="false" />
+        <activity
+            android:name=".match.activity.MatchActivity"
+            android:exported="false" />
+        <activity
+            android:name=".match.activity.MatchMainActivity"
+            android:exported="false" />
         <activity
             android:name=".main.ui.MainActivity"
             android:exported="true">
@@ -39,12 +49,24 @@
         <activity
             android:name=".user.ui.SignUp"
             android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <activity
             android:name=".friend.ui.Befriend"
             android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="NATIVE_APP_KEY"
+            android:value="f4360ed6d5169b705e8dbe21b0695ace" />
 
         <activity
             android:name=".global.KakaoInit" />
