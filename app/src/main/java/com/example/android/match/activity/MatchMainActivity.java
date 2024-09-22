@@ -71,6 +71,7 @@ public class MatchMainActivity extends AppCompatActivity {
     private ImageButton check_reject;
     private FrameLayout check_toast;
     private FrameLayout match_fail_toast;
+    private FrameLayout match_delete_toast;
     private RelativeLayout match_random_loading;
     private boolean friendMatch;
 
@@ -115,6 +116,7 @@ public class MatchMainActivity extends AppCompatActivity {
         all_rank_button = findViewById(R.id.all_rank);
         friend_rank_button = findViewById(R.id.friend__rank);
         match_fail_toast = findViewById(R.id.match_fail_toast);
+        match_delete_toast = findViewById(R.id.match_delete_toast);
         match_delete = findViewById(R.id.match_delete);
         currentIndex = 0;
 
@@ -165,34 +167,13 @@ public class MatchMainActivity extends AppCompatActivity {
             }
         });
 
-        Call<ResponseTemplate<MatchResponseList>> call = matchAPI.getMatchList();
-        call.enqueue(new Callback<ResponseTemplate<MatchResponseList>>() {
+        new Runnable() {
             @Override
-            public void onResponse(Call<ResponseTemplate<MatchResponseList>> call, Response<ResponseTemplate<MatchResponseList>> response) {
-                if (response.isSuccessful()) {
-                    MatchResponseList results = response.body().getResults();
-                    matchList = results.getMatchResponseList();
-                    if (matchList != null) {
-                        try {
-                            MatchResponse match = matchList.get(currentIndex);
-                            match_list_name.setText(match.getLeader().getNickname());
-                            friendMatchId = match.getMatchId();
-                        }
-                        catch (Exception e) {
-                            match_list_name.setText(""); //나중에 이름 옆에 이미지 넣기 - 디자인
-                        }
-                    } else {
-                        match_list_name.setText(""); //나중에 이름 옆에 이미지 넣기 - 디자인
-                    }
-                } else {
-                    Log.e("MatchMainActivity", "Response failed: " + response.message());
-                }
+            public void run() {
+                updateMatchList();
+                new Handler().postDelayed(this, 10000);
             }
-            @Override
-            public void onFailure(Call<ResponseTemplate<MatchResponseList>> call, Throwable t) {
-                Log.e("MatchMainActivity", "API call failed: " + t.getMessage());
-            }
-        });
+        }.run();
         right_button.setOnClickListener(v -> {
             if (matchList != null && currentIndex < matchList.size() - 1) {
                 currentIndex++;
@@ -250,6 +231,8 @@ public class MatchMainActivity extends AppCompatActivity {
                 }
                 else {
                     check_toast.setVisibility(View.GONE);
+                    url = "/topic/matches/" + friendMatchId;
+                    startStomp();
                     Call<ResponseTemplate<Void>> call = matchAPI.rejectMatch(friendMatchId);
                     call.enqueue(new Callback<ResponseTemplate<Void>>() {
                         @Override
@@ -372,6 +355,9 @@ public class MatchMainActivity extends AppCompatActivity {
         if(message.equals("MATCH_FAIL")) {
             handleMatchFail();
         }
+        else if(message.equals("MATCH_DELETE")) {
+            handleMatchDelete();
+        }
         else {
             try {
                 Gson gson = new GsonBuilder().create();
@@ -409,6 +395,59 @@ public class MatchMainActivity extends AppCompatActivity {
             }
         });
         stompClient.disconnect();
+    }
+
+    private void handleMatchDelete() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                match_delete_toast.setVisibility(View.VISIBLE);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        match_delete_toast.setVisibility(View.GONE);
+                    }
+                }, 2000);
+            }
+        });
+        stompClient.disconnect();
+    }
+
+    private void updateMatchList() {
+        currentIndex = 0;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Call<ResponseTemplate<MatchResponseList>> call = matchAPI.getMatchList();
+                call.enqueue(new Callback<ResponseTemplate<MatchResponseList>>() {
+                    @Override
+                    public void onResponse(Call<ResponseTemplate<MatchResponseList>> call, Response<ResponseTemplate<MatchResponseList>> response) {
+                        if (response.isSuccessful()) {
+                            MatchResponseList results = response.body().getResults();
+                            matchList = results.getMatchResponseList();
+                            if (matchList != null) {
+                                try {
+                                    MatchResponse match = matchList.get(currentIndex);
+                                    match_list_name.setText(match.getLeader().getNickname());
+                                    friendMatchId = match.getMatchId();
+                                }
+                                catch (Exception e) {
+                                    match_list_name.setText("");
+                                }
+                            } else {
+                                match_list_name.setText("");
+                            }
+                        } else {
+                            Log.e("MatchMainActivity", "Response failed: " + response.message());
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<ResponseTemplate<MatchResponseList>> call, Throwable t) {
+                        Log.e("MatchMainActivity", "API call failed: " + t.getMessage());
+                    }
+                });
+            }
+        });
     }
 
 }
