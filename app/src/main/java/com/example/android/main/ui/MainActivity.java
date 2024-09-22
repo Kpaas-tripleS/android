@@ -31,48 +31,6 @@ public class MainActivity extends AppCompatActivity {
 
         beFriendApi = RetrofitClient.getInstance(this).getBefriendApi();
 
-        setupWindowInsets();
         userApi = RetrofitClient.getInstance(this).getUserApi();
-
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendFriendRequest(2L);
-            }
-        });
-    }
-
-    public void sendFriendRequest(Long receiverId) {
-        BeFriendRequest request = new BeFriendRequest(receiverId);
-        Call<Void> call = beFriendApi.sendFriendRequest(request);
-
-        call.enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    // 친구 요청 성공
-                    System.out.println("Friend request sent successfully.");
-                } else {
-                    // 친구 요청 실패
-                    System.out.println("Failed to send friend request: " + response.message());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                // 네트워크 오류
-                System.out.println("Network error: " + t.getMessage());
-            }
-        });
-    }
-
-    private void setupWindowInsets() {
-        View mainView = findViewById(R.id.main);
-        ViewCompat.setOnApplyWindowInsetsListener(mainView, (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
     }
 }

@@ -23,7 +23,6 @@ public class RetrofitClient {
     private final FriendApi friendApi;
     private final String BASE_URL = "http://3.39.123.38:8081";
 
-    // RetrofitClient 생성자에 Context를 전달받아 SharedPreferences 사용
     private RetrofitClient(Context context) {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -31,9 +30,7 @@ public class RetrofitClient {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .addInterceptor(loggingInterceptor)
                 .addInterceptor(chain -> {
-                    // SharedPreferences에서 accessToken을 가져옴
-                    SharedPreferences sharedPreferences = context.getSharedPreferences("token", Context.MODE_PRIVATE);
-                    String accessToken = sharedPreferences.getString("accessToken", null);
+                    String accessToken = getAccessToken(context); // AccessToken 가져오기
                     Log.d("AccessTokenCheck", "Access Token: " + accessToken); // 추가된 로그
 
                     Request.Builder requestBuilder = chain.request().newBuilder();
@@ -62,7 +59,6 @@ public class RetrofitClient {
         friendApi = retrofit.create(FriendApi.class);
     }
 
-    // Singleton 패턴으로 RetrofitClient 인스턴스를 반환, Context 필요
     public static synchronized RetrofitClient getInstance(Context context) {
         if (instance == null) {
             instance = new RetrofitClient(context);
@@ -80,5 +76,11 @@ public class RetrofitClient {
 
     public FriendApi getFriendApi() {
         return friendApi;
+    }
+
+    // AccessToken을 SharedPreferences에서 가져오는 메서드
+    public String getAccessToken(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("token", Context.MODE_PRIVATE);
+        return sharedPreferences.getString("accessToken", null); // 기본값은 null
     }
 }

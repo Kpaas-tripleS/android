@@ -1,6 +1,10 @@
 package com.example.android.friend.ui;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,8 +15,10 @@ import com.example.android.R;
 import com.example.android.friend.api.BeFriendApi;
 import com.example.android.friend.dto.request.BeFriendRequest;
 import com.example.android.friend.dto.response.BeFriendResponseList;
+import com.example.android.global.ResponseTemplate;
 import com.example.android.global.RetrofitClient;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -20,9 +26,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class Befriend extends AppCompatActivity {
+
     private RecyclerView friendRequestRecyclerView;
     private BeFriendApi beFriendApi;
     private ChildAdapter childAdapter;
+    private List<BeFriendRequest> befriendRequests = new ArrayList<>(); // 친구 요청을 저장할 리스트
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,67 +39,63 @@ public class Befriend extends AppCompatActivity {
         setContentView(R.layout.be_friend);
 
         beFriendApi = RetrofitClient.getInstance(this).getBefriendApi();
-        sendFriendRequest(2L);
 
         friendRequestRecyclerView = findViewById(R.id.friendRequestRecyclerView);
         friendRequestRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        childAdapter = new ChildAdapter(befriendRequests, this);
+        friendRequestRecyclerView.setAdapter(childAdapter);
 
+        progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
 
         loadFriendRequests();
     }
 
-    public void sendFriendRequest(Long receiverId) {
-        BeFriendRequest request = new BeFriendRequest(receiverId);
-        Call<Void> call = beFriendApi.sendFriendRequest(request);
-
-        call.enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    // 친구 요청 성공
-                    System.out.println("Friend request sent successfully.");
-                } else {
-                    // 친구 요청 실패
-                    System.out.println("Failed to send friend request: " + response.message());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                // 네트워크 오류
-                System.out.println("Network error: " + t.getMessage());
-            }
-        });
-    }
-
     private void loadFriendRequests() {
-        beFriendApi.getFriendRequestList().enqueue(new Callback<BeFriendResponseList>() {
+        beFriendApi.getFriendRequestList().enqueue(new Callback<ResponseTemplate<BeFriendResponseList>>() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
-            public void onResponse(Call<BeFriendResponseList> call, Response<BeFriendResponseList> response) {
+            public void onResponse(Call<ResponseTemplate<BeFriendResponseList>> call, Response<ResponseTemplate<BeFriendResponseList>> response) {
+                progressBar.setVisibility(View.GONE);
+
                 if (response.isSuccessful() && response.body() != null) {
-                    List<BeFriendRequest> requests = response.body().getRequests();
+                    List<BeFriendRequest> requests = response.body().getResults().getRequests();
 
-//                    childAdapter = new ChildAdapter(requests);
-//                    friendRequestRecyclerView.setAdapter(childAdapter);
-//
+                    Log.d("APIResponse", "Received requests: " + requests);
 
-                    for (BeFriendRequest request : requests) {
-                        addRequestToRecyclerView(request);
+                    if (requests != null && !requests.isEmpty()) {
+
+                        List<String> nicknames = new ArrayList<>();
+                        for (BeFriendRequest request : requests) {
+                            nicknames.add(request.getNickname());
+                        }
+
+                        befriendRequests.clear();
+                        for (String nickname : nicknames) {
+                            befriendRequests.add(new BeFriendRequest(null, nickname)); // 새로운 BeFriendRequest 객체 생성
+                        }
+                        childAdapter.notifyDataSetChanged();
+                    } else {
+                        Log.e("APIError", "No requests found");
+                        Toast.makeText(Befriend.this, "친구 요청이 없습니다.", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(Befriend.this, "친구 요청을 불러오지 못했습니다.", Toast.LENGTH_SHORT).show();
+                    Log.e("APIError", "Response Code: " + response.code() + ", Message: " + response.message());
+                    Toast.makeText(Befriend.this, "친구 요청 로드 실패.", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<BeFriendResponseList> call, Throwable t) {
+            public void onFailure(Call<ResponseTemplate<BeFriendResponseList>> call, Throwable t) {
+                progressBar.setVisibility(View.GONE);
                 Toast.makeText(Befriend.this, "서버 오류: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+
     private void addRequestToRecyclerView(BeFriendRequest request) {
-//        befriendRequest.add(request);
-//        childAdapter.notifyItemInserted(befriendRequests.size() - 1);
+        befriendRequests.add(request);
+        childAdapter.notifyItemInserted(befriendRequests.size() - 1);
     }
 }

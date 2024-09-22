@@ -15,11 +15,9 @@ public class ResponseTemplate<T> {
     @SerializedName("results")
     private T results;
 
-    // 기본 생성자
     public ResponseTemplate() {
     }
 
-    // 모든 필드를 초기화하는 생성자
     public ResponseTemplate(Boolean isSuccess, String code, String message, T results) {
         this.isSuccess = isSuccess;
         this.code = code;
@@ -27,7 +25,6 @@ public class ResponseTemplate<T> {
         this.results = results;
     }
 
-    // Getter 및 Setter 메서드
     public Boolean getIsSuccess() {
         return isSuccess;
     }

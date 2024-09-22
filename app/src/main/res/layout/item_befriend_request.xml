@@ -5,12 +5,11 @@
     android:layout_margin="8dp">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- 프로필 이미지 -->
         <TextView
             android:id="@+id/nickname"
             android:layout_width="wrap_content"
@@ -27,14 +26,17 @@
             android:scaleType="centerCrop"
             android:src="@drawable/ic_launcher_foreground" />
 
-        <!-- 닉네임 -->
-
-        <!-- 친구 수락 버튼 -->
         <Button
             android:id="@+id/acceptButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Accept" />
+            android:text="친구 수락하기" />
+
+        <Button
+            android:id="@+id/declineButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="거절하기" />
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

@@ -11,6 +11,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import android.view.View;
 
+import com.example.android.friend.ui.Befriend;
 import com.example.android.match.activity.MatchMainActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         goToMatch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, MatchMainActivity.class);
+                Intent intent = new Intent(MainActivity.this, Befriend.class);
                 startActivity(intent);
             }
         });
