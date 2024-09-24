@@ -6,6 +6,8 @@ import android.util.Log;
 
 import com.example.android.friend.api.BeFriendApi;
 import com.example.android.friend.api.FriendApi;
+import com.example.android.match.API.MatchAPI;
+import com.example.android.match.API.RankingAPI;
 import com.example.android.user.api.UserApi;
 
 import okhttp3.OkHttpClient;
@@ -21,7 +23,9 @@ public class RetrofitClient {
     private final UserApi userApi;
     private final BeFriendApi befriendApi;
     private final FriendApi friendApi;
-    private final String BASE_URL = "http://3.39.123.38:8081";
+    private final MatchAPI matchAPI;
+    private final RankingAPI rankingAPI;
+    private final String BASE_URL = "http://3.39.123.38:8081"; //http://10.0.2.2:8080/
 
     // RetrofitClient 생성자에 Context를 전달받아 SharedPreferences 사용
     private RetrofitClient(Context context) {
@@ -60,6 +64,8 @@ public class RetrofitClient {
         userApi = retrofit.create(UserApi.class);
         befriendApi = retrofit.create(BeFriendApi.class);
         friendApi = retrofit.create(FriendApi.class);
+        matchAPI = retrofit.create(MatchAPI.class);
+        rankingAPI = retrofit.create(RankingAPI.class);
     }
 
     // Singleton 패턴으로 RetrofitClient 인스턴스를 반환, Context 필요
@@ -68,6 +74,11 @@ public class RetrofitClient {
             instance = new RetrofitClient(context);
         }
         return instance;
+    }
+
+    public String getAccessToken(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("token", Context.MODE_PRIVATE);
+        return sharedPreferences.getString("accessToken", null);
     }
 
     public UserApi getUserApi() {
@@ -80,5 +91,13 @@ public class RetrofitClient {
 
     public FriendApi getFriendApi() {
         return friendApi;
+    }
+
+    public MatchAPI getMatchAPI() {
+        return matchAPI;
+    }
+
+    public RankingAPI getRankingAPI() {
+        return rankingAPI;
     }
 }

@@ -16,6 +16,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.android.R;
+import com.example.android.global.RetrofitClient;
 import com.example.android.global.dto.response.ResponseTemplate;
 import com.example.android.match.API.MatchAPI;
 import com.example.android.match.dto.QuizDto;
@@ -26,19 +27,13 @@ import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 import ua.naiksoftware.stomp.Stomp;
 import ua.naiksoftware.stomp.dto.StompHeader;
 
 public class MatchActivity extends AppCompatActivity {
 
-    private final String token = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MjY5NDA1OTQsImV4cCI6MTcyNjk0NDE5NCwiaXNzIjoidHJpcGxlcyIsInN1YiI6IjEiLCJyb2xlIjoiQURNSU4ifQ.Q-rUrRLBPyOQF-k3TTXKZno18vM9RLIj8xEzierwh2dhvsSeGXlbMGjvlFx76bWs1RORhpIXLEvbpSmE5sfmfw";
+    private String token;
     private ua.naiksoftware.stomp.StompClient stompClient;
     private ViewGroup rootView;
     private Long matchId;
@@ -72,27 +67,15 @@ public class MatchActivity extends AppCompatActivity {
         });
         rootView = findViewById(R.id.main);
 
-        OkHttpClient okHttpClient = new OkHttpClient.Builder() //임시 토큰
-                .addInterceptor(chain -> {
-                    Request request = chain.request().newBuilder()
-                            .addHeader("Authorization", token)
-                            .build();
-                    return chain.proceed(request);
-                })
-                .build();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(okHttpClient)
-                .build();
+        RetrofitClient retrofit = RetrofitClient.getInstance(this);
+        token = retrofit.getAccessToken(this);
 
         Intent intent = getIntent();
         matchInfo = intent.getParcelableExtra("MATCH_START_RESPONSE");
         matchId = intent.getLongExtra("MATCH_ID", 0);
         url = "/topic/matches/" + matchId;
         startStomp();
-        matchAPI = retrofit.create(MatchAPI.class);
+        matchAPI = retrofit.getMatchAPI();
 
         player_name_text = findViewById(R.id.player_name_text);
         opponent_name_text = findViewById(R.id.opponent_name_text);
@@ -149,7 +132,7 @@ public class MatchActivity extends AppCompatActivity {
     private void startStomp() {
         stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, "ws://10.0.2.2:8080/ws");
         List<StompHeader> headers = new ArrayList<>();
-        headers.add(new StompHeader("Authorization", token));
+        headers.add(new StompHeader("Authorization", "Bearer " + token));
         stompClient.connect(headers);
         stompClient.lifecycle()
                 .subscribeOn(Schedulers.io())

@@ -16,6 +16,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.android.R;
+import com.example.android.global.RetrofitClient;
 import com.example.android.global.dto.response.ResponseTemplate;
 import com.example.android.match.API.MatchAPI;
 import com.example.android.match.API.RankingAPI;
@@ -36,19 +37,15 @@ import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 import ua.naiksoftware.stomp.Stomp;
 import ua.naiksoftware.stomp.dto.StompHeader;
 
 public class MatchMainActivity extends AppCompatActivity {
 
-    private final String token = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MjY5NDA1OTQsImV4cCI6MTcyNjk0NDE5NCwiaXNzIjoidHJpcGxlcyIsInN1YiI6IjEiLCJyb2xlIjoiQURNSU4ifQ.Q-rUrRLBPyOQF-k3TTXKZno18vM9RLIj8xEzierwh2dhvsSeGXlbMGjvlFx76bWs1RORhpIXLEvbpSmE5sfmfw";
+    private String token;
     private ua.naiksoftware.stomp.StompClient stompClient;
     private int currentIndex;
     private List<MatchResponse> matchList;
@@ -85,23 +82,11 @@ public class MatchMainActivity extends AppCompatActivity {
             return insets;
         });
 
-        OkHttpClient okHttpClient = new OkHttpClient.Builder() //임시 토큰
-                .addInterceptor(chain -> {
-                    Request request = chain.request().newBuilder()
-                            .addHeader("Authorization", token)
-                            .build();
-                    return chain.proceed(request);
-                })
-                .build();
+        RetrofitClient retrofit = RetrofitClient.getInstance(this);
+        token = retrofit.getAccessToken(this);
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(okHttpClient)
-                .build();
-
-        matchAPI = retrofit.create(MatchAPI.class);
-        rankingAPI = retrofit.create(RankingAPI.class);
+        matchAPI = retrofit.getMatchAPI();
+        rankingAPI = retrofit.getRankingAPI();
         right_button = findViewById(R.id.match_right_button);
         left_button = findViewById(R.id.match_left_button);
         match_accept = findViewById(R.id.match_accept_button);
@@ -320,9 +305,8 @@ public class MatchMainActivity extends AppCompatActivity {
     private void startStomp() {
         stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, "ws://10.0.2.2:8080/ws");
         List<StompHeader> headers = new ArrayList<>();
-        headers.add(new StompHeader("Authorization", token));
+        headers.add(new StompHeader("Authorization", "Bearer " + token));
         stompClient.connect(headers);
-        //stompClient.connect();
         stompClient.lifecycle()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -408,6 +392,7 @@ public class MatchMainActivity extends AppCompatActivity {
                         match_delete_toast.setVisibility(View.GONE);
                     }
                 }, 2000);
+                updateMatchList();
             }
         });
         stompClient.disconnect();
