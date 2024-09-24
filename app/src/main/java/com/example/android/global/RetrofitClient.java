@@ -81,4 +81,6 @@ public class RetrofitClient {
     public FriendApi getFriendApi() {
         return friendApi;
     }
+
 }
+

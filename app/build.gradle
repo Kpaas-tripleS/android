@@ -63,4 +63,21 @@ dependencies {
     implementation "com.kakao.sdk:v2-friend:2.20.6" // 피커 API 모듈
     implementation "com.kakao.sdk:v2-navi:2.20.6" // 카카오내비 API 모듈
     implementation "com.kakao.sdk:v2-cert:2.20.6" // 카카오톡 인증 서비스 API 모듈
+
+
+
+    def lifecycle_version = "2.6.1"  // viewmodeldmf dnlgks fkdlvm zjavhsjsxm
+
+    // ViewModel
+    implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
+    // LiveData
+    implementation "androidx:lifecycle:lifecycle-livedata:$lifecycle_version"
+    // Lifecycles only (without ViewModel or LiveData)
+    implementation "androidx.lifecycle:lifecycle-runtime:$lifecycle_version"
+
+    // Saved state module for ViewModel
+    implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version"
+
+    // Annotation processor
+    annotationProcessor "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
 }
