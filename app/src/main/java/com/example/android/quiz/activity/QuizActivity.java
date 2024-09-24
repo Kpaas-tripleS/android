@@ -1,16 +1,22 @@
 package com.example.android.quiz.activity;
 
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.android.R;
 import com.example.android.quiz.viewmodel.QuizViewModel;
 import com.example.android.quiz.dto.QuizDto;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class QuizActivity extends AppCompatActivity {
@@ -20,6 +26,9 @@ public class QuizActivity extends AppCompatActivity {
     private Button submitButton;
     private List<QuizDto> quizzes;
     private int currentQuizIndex = 0;
+    private long startTime;
+    private List<Long> solvingTimes = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +68,10 @@ public class QuizActivity extends AppCompatActivity {
         submitButton.setOnClickListener(v -> submitAnswer());
 
         viewModel.loadQuizzes();
+
+        Log.d("QuizActivity", "onCreate called");
+        Toast.makeText(this, "퀴즈 액티비티 시작", Toast.LENGTH_SHORT).show();
+
     }
 
     private void displayQuiz(QuizDto quiz) {
@@ -78,4 +91,21 @@ public class QuizActivity extends AppCompatActivity {
             viewModel.submitAnswer(quizzes.get(currentQuizIndex).getQuizId(), 1L, answer);
         }
     }
+
+    // 타이머 종료 및 시간 저장
+    private void stopTimerAndSave() {
+        long endTime = SystemClock.elapsedRealtime();
+        long solvingTime = (endTime - startTime) / 1000; // 밀리초를 초 단위로 변환
+        solvingTimes.add(solvingTime);
+    }
+
+    private double calculateAverageTime() {  //QuizResultActivity로 전달
+        long sum = 0;
+        for (Long time : solvingTimes) {
+            sum += time;
+        }
+        double average = (double) sum / solvingTimes.size(); // 평균을 double 타입으로 계산
+        return Math.round(average * 10) / 10.0; // 소수점 한자리까지 반올림
+    }
+
 }

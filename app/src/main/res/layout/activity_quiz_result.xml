@@ -6,24 +6,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background"
-    tools:context=".QuizResultActivity">
+    tools:context=".quiz.activity.QuizResultActivity">
 
     <TextView
         android:id="@+id/successEmoji"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="30dp"
         android:text="😁"
         android:textSize="48sp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintVertical_bias="0.2"/>
 
     <TextView
         android:id="@+id/usernameMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="나이스 잡, 최버피님!"
+        android:text="최고에요, 최버피님!"
         android:textSize="24sp"
         android:textColor="@android:color/white"
         app:layout_constraintTop_toBottomOf="@id/successEmoji"
@@ -70,6 +71,7 @@
                 android:src="@drawable/match_ufo" />
 
             <TextView
+                android:id="@+id/correctAnswersTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="4/5"
@@ -81,7 +83,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="오늘 얻은 지식"
+                android:text="오늘 수확한 지식"
                 android:textSize="14sp"
                 android:textColor="@android:color/darker_gray"/>
         </LinearLayout>
@@ -99,9 +101,10 @@
                 android:src="@drawable/match_random_match_button" />
 
             <TextView
+                android:id="@+id/averageTimeTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="9"
+                android:text="30초"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 android:textColor="@android:color/white"
@@ -110,7 +113,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="탐험 연속일"
+                android:text="평균 풀이 시간"
                 android:textSize="14sp"
                 android:textColor="@android:color/darker_gray"/>
         </LinearLayout>
@@ -128,6 +131,7 @@
                 android:src="@drawable/match_lightning" />
 
             <TextView
+                android:id="@+id/totalQuestionsTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="9474"
@@ -139,7 +143,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="지금까지 쌓아온 지식"
+                android:text="차곡차곡  지식들"
                 android:textSize="14sp"
                 android:textColor="@android:color/darker_gray"/>
         </LinearLayout>
@@ -173,20 +177,21 @@
             android:layout_marginTop="16dp">
 
             <ImageButton
+                android:id="@+id/thumbsUpButton"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_marginEnd="32dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:backgroundTint="#9C27B0"
                 android:src="@drawable/thumbs_up"
-                />
+                android:contentDescription="좋아요 버튼입니다. 눌러서 좋아요를 표시하세요."/>
 
             <ImageButton
+                android:id="@+id/thumbsDownButton"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/thumbs_down"
-                 />
+                android:contentDescription="싫어요 버튼입니다. 눌러서 싫어요를 표시하세요."/>
         </LinearLayout>
 
     </LinearLayout>
@@ -195,13 +200,14 @@
         android:id="@+id/continueButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="112dp"
+        android:layout_marginBottom="4dp"
         android:backgroundTint="@android:color/holo_blue_dark"
         android:text="복습하러가기"
         android:textColor="@android:color/white"
+        app:layout_constraintTop_toBottomOf="@id/lessonFeedbackLayout"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.609"
+        app:layout_constraintHorizontal_bias="0.487"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintWidth_percent="0.9" />
 

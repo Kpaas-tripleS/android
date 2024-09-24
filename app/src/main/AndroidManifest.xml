@@ -83,5 +83,28 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".quiz.activity.QuizActivity"
+            android:exported="true">
+            <intent-filter>
+                <!-- 앱의 진입점으로 설정하기 위한 LAUNCHER 인텐트 필터 -->
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".quiz.activity.QuizResultActivity"
+            android:exported="true">
+            <intent-filter>
+                <!-- 앱의 진입점으로 설정하기 위한 LAUNCHER 인텐트 필터 -->
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+
+
     </application>
 </manifest>
+
