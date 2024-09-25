@@ -51,6 +51,7 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ViewHolder> 
     }
     @Override
     public int getItemCount() {
+        return requests.size();
     }
 
 
