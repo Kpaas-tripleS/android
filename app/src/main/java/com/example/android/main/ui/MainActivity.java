@@ -19,18 +19,13 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
-    private Button loginButton;
-    private UserApi userApi;
-    private BeFriendApi beFriendApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        loginButton = findViewById(R.id.login);
 
-        beFriendApi = RetrofitClient.getInstance(this).getBefriendApi();
+        RetrofitClient retrofit = RetrofitClient.getInstance(this);
 
-        userApi = RetrofitClient.getInstance(this).getUserApi();
     }
 }
