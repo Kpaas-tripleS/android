@@ -15,21 +15,17 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.android.R;
+import com.example.android.global.RetrofitClient;
 import com.example.android.global.dto.response.ResponseTemplate;
 import com.example.android.match.API.MatchAPI;
 import com.example.android.match.dto.response.MatchResultResponse;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MatchResultActivity extends AppCompatActivity {
 
-    private final String token = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MjY5NDA1OTQsImV4cCI6MTcyNjk0NDE5NCwiaXNzIjoidHJpcGxlcyIsInN1YiI6IjEiLCJyb2xlIjoiQURNSU4ifQ.Q-rUrRLBPyOQF-k3TTXKZno18vM9RLIj8xEzierwh2dhvsSeGXlbMGjvlFx76bWs1RORhpIXLEvbpSmE5sfmfw";
     private MatchAPI matchAPI;
     private Long matchId;
     private ImageView player_profile;
@@ -51,20 +47,7 @@ public class MatchResultActivity extends AppCompatActivity {
             return insets;
         });
 
-        OkHttpClient okHttpClient = new OkHttpClient.Builder() //임시 토큰
-                .addInterceptor(chain -> {
-                    Request request = chain.request().newBuilder()
-                            .addHeader("Authorization", token)
-                            .build();
-                    return chain.proceed(request);
-                })
-                .build();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(okHttpClient)
-                .build();
+        RetrofitClient retrofit = RetrofitClient.getInstance(this);
 
         Intent intent = getIntent();
         matchId = intent.getLongExtra("MATCH_ID", 0);
@@ -75,7 +58,7 @@ public class MatchResultActivity extends AppCompatActivity {
         match_win = findViewById(R.id.match_win);
         match_lose = findViewById(R.id.match_lose);
         return_button = findViewById(R.id.match_return_button);
-        matchAPI = retrofit.create(MatchAPI.class);
+        matchAPI = retrofit.getMatchAPI();
 
 
         Call<ResponseTemplate<MatchResultResponse>> call = matchAPI.resultQuizForMatch(matchId);

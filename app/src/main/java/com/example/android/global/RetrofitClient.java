@@ -59,6 +59,7 @@ public class RetrofitClient {
         friendApi = retrofit.create(FriendApi.class);
     }
 
+    // Singleton 패턴으로 RetrofitClient 인스턴스를 반환, Context 필요
     public static synchronized RetrofitClient getInstance(Context context) {
         if (instance == null) {
             instance = new RetrofitClient(context);

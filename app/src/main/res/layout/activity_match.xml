@@ -54,6 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textSize="12sp"
+            android:fontFamily="@font/jeju_gothic"
             android:textColor="#000000"
             android:textStyle="bold" />
     </FrameLayout>
@@ -80,6 +81,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textSize="12sp"
+            android:fontFamily="@font/jeju_gothic"
             android:textColor="#000000"
             android:textStyle="bold" />
     </FrameLayout>
@@ -124,6 +126,9 @@
                 android:maxHeight="180dp"
                 android:maxWidth="240dp"
                 android:textSize="16sp"
+                android:fontFamily="@font/jeju_gothic"
+                android:textStyle="bold"
+                android:lineSpacingExtra="5dp"
                 android:scrollbars="vertical"
                 android:textColor="#000000" />
         </ScrollView>
@@ -155,7 +160,10 @@
             android:maxHeight="60dp"
             android:gravity="center"
             android:textColor="@android:color/black"
-            android:textSize="16sp"
+            android:textSize="14sp"
+            android:fontFamily="@font/jeju_gothic"
+            android:textStyle="bold"
+            android:lineSpacingExtra="2dp"
             android:layout_gravity="center"/>
     </FrameLayout>
 
@@ -184,7 +192,10 @@
             android:maxHeight="60dp"
             android:gravity="center"
             android:textColor="@android:color/black"
-            android:textSize="16sp"
+            android:textSize="14sp"
+            android:fontFamily="@font/jeju_gothic"
+            android:textStyle="bold"
+            android:lineSpacingExtra="2dp"
             android:layout_gravity="center"/>
     </FrameLayout>
 
@@ -213,7 +224,10 @@
             android:maxHeight="60dp"
             android:gravity="center"
             android:textColor="@android:color/black"
-            android:textSize="16sp"
+            android:textSize="14sp"
+            android:fontFamily="@font/jeju_gothic"
+            android:textStyle="bold"
+            android:lineSpacingExtra="2dp"
             android:layout_gravity="center"/>
     </FrameLayout>
 
@@ -242,7 +256,10 @@
             android:maxHeight="60dp"
             android:gravity="center"
             android:textColor="@android:color/black"
-            android:textSize="16sp"
+            android:textSize="14sp"
+            android:fontFamily="@font/jeju_gothic"
+            android:textStyle="bold"
+            android:lineSpacingExtra="2dp"
             android:layout_gravity="center"/>
     </FrameLayout>
 

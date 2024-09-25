@@ -40,7 +40,9 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textColor="@android:color/black"
-        android:textSize="16sp"
+        android:textSize="20sp"
+        android:fontFamily="@font/jeju_gothic"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@id/match_list_box"
         app:layout_constraintEnd_toEndOf="@id/match_list_box"
         app:layout_constraintHorizontal_bias="0.502"
@@ -169,6 +171,9 @@
                 android:layout_height="wrap_content"
                 android:maxHeight="130dp"
                 android:textSize="16sp"
+                android:fontFamily="@font/jeju_gothic"
+                android:textStyle="bold"
+                android:lineSpacingExtra="3dp"
                 android:scrollbars="vertical"
                 android:textColor="#000000" />
         </ScrollView>
@@ -222,6 +227,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/match_fail_toast" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/match_delete_toast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.473">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/match_delete_toast" />
     </FrameLayout>
 
     <RelativeLayout

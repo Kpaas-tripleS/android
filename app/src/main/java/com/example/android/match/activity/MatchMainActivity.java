@@ -16,6 +16,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.android.R;
+import com.example.android.global.RetrofitClient;
 import com.example.android.global.dto.response.ResponseTemplate;
 import com.example.android.match.API.MatchAPI;
 import com.example.android.match.API.RankingAPI;
@@ -36,19 +37,15 @@ import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 import ua.naiksoftware.stomp.Stomp;
 import ua.naiksoftware.stomp.dto.StompHeader;
 
 public class MatchMainActivity extends AppCompatActivity {
 
-    private final String token = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MjY5NDA1OTQsImV4cCI6MTcyNjk0NDE5NCwiaXNzIjoidHJpcGxlcyIsInN1YiI6IjEiLCJyb2xlIjoiQURNSU4ifQ.Q-rUrRLBPyOQF-k3TTXKZno18vM9RLIj8xEzierwh2dhvsSeGXlbMGjvlFx76bWs1RORhpIXLEvbpSmE5sfmfw";
+    private String token;
     private ua.naiksoftware.stomp.StompClient stompClient;
     private int currentIndex;
     private List<MatchResponse> matchList;
@@ -71,6 +68,7 @@ public class MatchMainActivity extends AppCompatActivity {
     private ImageButton check_reject;
     private FrameLayout check_toast;
     private FrameLayout match_fail_toast;
+    private FrameLayout match_delete_toast;
     private RelativeLayout match_random_loading;
     private boolean friendMatch;
 
@@ -84,23 +82,11 @@ public class MatchMainActivity extends AppCompatActivity {
             return insets;
         });
 
-        OkHttpClient okHttpClient = new OkHttpClient.Builder() //임시 토큰
-                .addInterceptor(chain -> {
-                    Request request = chain.request().newBuilder()
-                            .addHeader("Authorization", token)
-                            .build();
-                    return chain.proceed(request);
-                })
-                .build();
+        RetrofitClient retrofit = RetrofitClient.getInstance(this);
+        token = retrofit.getAccessToken(this);
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(okHttpClient)
-                .build();
-
-        matchAPI = retrofit.create(MatchAPI.class);
-        rankingAPI = retrofit.create(RankingAPI.class);
+        matchAPI = retrofit.getMatchAPI();
+        rankingAPI = retrofit.getRankingAPI();
         right_button = findViewById(R.id.match_right_button);
         left_button = findViewById(R.id.match_left_button);
         match_accept = findViewById(R.id.match_accept_button);
@@ -115,6 +101,7 @@ public class MatchMainActivity extends AppCompatActivity {
         all_rank_button = findViewById(R.id.all_rank);
         friend_rank_button = findViewById(R.id.friend__rank);
         match_fail_toast = findViewById(R.id.match_fail_toast);
+        match_delete_toast = findViewById(R.id.match_delete_toast);
         match_delete = findViewById(R.id.match_delete);
         currentIndex = 0;
 
@@ -165,34 +152,13 @@ public class MatchMainActivity extends AppCompatActivity {
             }
         });
 
-        Call<ResponseTemplate<MatchResponseList>> call = matchAPI.getMatchList();
-        call.enqueue(new Callback<ResponseTemplate<MatchResponseList>>() {
+        new Runnable() {
             @Override
-            public void onResponse(Call<ResponseTemplate<MatchResponseList>> call, Response<ResponseTemplate<MatchResponseList>> response) {
-                if (response.isSuccessful()) {
-                    MatchResponseList results = response.body().getResults();
-                    matchList = results.getMatchResponseList();
-                    if (matchList != null) {
-                        try {
-                            MatchResponse match = matchList.get(currentIndex);
-                            match_list_name.setText(match.getLeader().getNickname());
-                            friendMatchId = match.getMatchId();
-                        }
-                        catch (Exception e) {
-                            match_list_name.setText(""); //나중에 이름 옆에 이미지 넣기 - 디자인
-                        }
-                    } else {
-                        match_list_name.setText(""); //나중에 이름 옆에 이미지 넣기 - 디자인
-                    }
-                } else {
-                    Log.e("MatchMainActivity", "Response failed: " + response.message());
-                }
+            public void run() {
+                updateMatchList();
+                new Handler().postDelayed(this, 10000);
             }
-            @Override
-            public void onFailure(Call<ResponseTemplate<MatchResponseList>> call, Throwable t) {
-                Log.e("MatchMainActivity", "API call failed: " + t.getMessage());
-            }
-        });
+        }.run();
         right_button.setOnClickListener(v -> {
             if (matchList != null && currentIndex < matchList.size() - 1) {
                 currentIndex++;
@@ -250,6 +216,8 @@ public class MatchMainActivity extends AppCompatActivity {
                 }
                 else {
                     check_toast.setVisibility(View.GONE);
+                    url = "/topic/matches/" + friendMatchId;
+                    startStomp();
                     Call<ResponseTemplate<Void>> call = matchAPI.rejectMatch(friendMatchId);
                     call.enqueue(new Callback<ResponseTemplate<Void>>() {
                         @Override
@@ -337,9 +305,8 @@ public class MatchMainActivity extends AppCompatActivity {
     private void startStomp() {
         stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, "ws://10.0.2.2:8080/ws");
         List<StompHeader> headers = new ArrayList<>();
-        headers.add(new StompHeader("Authorization", token));
+        headers.add(new StompHeader("Authorization", "Bearer " + token));
         stompClient.connect(headers);
-        //stompClient.connect();
         stompClient.lifecycle()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -371,6 +338,9 @@ public class MatchMainActivity extends AppCompatActivity {
     private void handleStomp(String message) {
         if(message.equals("MATCH_FAIL")) {
             handleMatchFail();
+        }
+        else if(message.equals("MATCH_DELETE")) {
+            handleMatchDelete();
         }
         else {
             try {
@@ -409,6 +379,60 @@ public class MatchMainActivity extends AppCompatActivity {
             }
         });
         stompClient.disconnect();
+    }
+
+    private void handleMatchDelete() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                match_delete_toast.setVisibility(View.VISIBLE);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        match_delete_toast.setVisibility(View.GONE);
+                    }
+                }, 2000);
+                updateMatchList();
+            }
+        });
+        stompClient.disconnect();
+    }
+
+    private void updateMatchList() {
+        currentIndex = 0;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Call<ResponseTemplate<MatchResponseList>> call = matchAPI.getMatchList();
+                call.enqueue(new Callback<ResponseTemplate<MatchResponseList>>() {
+                    @Override
+                    public void onResponse(Call<ResponseTemplate<MatchResponseList>> call, Response<ResponseTemplate<MatchResponseList>> response) {
+                        if (response.isSuccessful()) {
+                            MatchResponseList results = response.body().getResults();
+                            matchList = results.getMatchResponseList();
+                            if (matchList != null) {
+                                try {
+                                    MatchResponse match = matchList.get(currentIndex);
+                                    match_list_name.setText(match.getLeader().getNickname());
+                                    friendMatchId = match.getMatchId();
+                                }
+                                catch (Exception e) {
+                                    match_list_name.setText("");
+                                }
+                            } else {
+                                match_list_name.setText("");
+                            }
+                        } else {
+                            Log.e("MatchMainActivity", "Response failed: " + response.message());
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<ResponseTemplate<MatchResponseList>> call, Throwable t) {
+                        Log.e("MatchMainActivity", "API call failed: " + t.getMessage());
+                    }
+                });
+            }
+        });
     }
 
 }
