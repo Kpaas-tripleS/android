@@ -17,5 +17,5 @@ public interface BeFriendApi {
     Call<ResponseTemplate<BeFriendResponseList>> getFriendRequestList();
 
     @POST("/be-friends")
-            Call<ResponseTemplate<BeFriendRequest>> handleFriendRequest(@Body BeFriendRequest beFriendRequest);
+    Call<ResponseTemplate<BeFriendRequest>> handleFriendRequest(@Body BeFriendRequest beFriendRequest);
 }

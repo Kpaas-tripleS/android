@@ -17,6 +17,7 @@ import java.util.List;
 
 public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ViewHolder> {
     private List<BeFriendRequest> requests;
+    private Befriend befriend;
     private Context context;
 
     public ChildAdapter(List<BeFriendRequest> requests, Context context) {
@@ -38,10 +39,14 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ViewHolder> 
 
         holder.nicknameTextView.setText(currentRequest.getNickname());
 
+//        holder.itemView.setOnClickListener(v -> {
+//            Intent intent = new Intent(context, Befriend.class);
+//            intent.putExtra("nickname", currentRequest.getNickname());
+//            context.startActivity(intent);
+//        });
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, Befriend.class);
-            intent.putExtra("nickname", currentRequest.getNickname());
-            context.startActivity(intent);
+            // Call the acceptFriendRequests method from the Befriend activity
+            befriend.acceptFriendRequests(currentRequest, position);
         });
     }
     @Override

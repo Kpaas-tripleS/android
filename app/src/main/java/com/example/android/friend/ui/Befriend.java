@@ -32,7 +32,6 @@ public class Befriend extends AppCompatActivity {
     private ChildAdapter childAdapter;
     private List<BeFriendRequest> befriendRequests = new ArrayList<>();
     private ProgressBar progressBar;
-    private BeFriendRequest beFriendRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +51,7 @@ public class Befriend extends AppCompatActivity {
         loadFriendRequests();
     }
 
-    private void acceptFriendRequests(BeFriendRequest beFriendRequest, int position) {
+    void acceptFriendRequests(BeFriendRequest beFriendRequest, int position) {
         beFriendApi.handleFriendRequest(beFriendRequest).enqueue(new Callback<ResponseTemplate<BeFriendRequest>>() {
             @Override
             public void onResponse(Call<ResponseTemplate<BeFriendRequest>> call, Response<ResponseTemplate<BeFriendRequest>> response) {
@@ -61,17 +60,16 @@ public class Befriend extends AppCompatActivity {
 
                     befriendRequests.remove(position);
                     childAdapter.notifyItemRemoved(position);
-
                 } else {
-                    Log.e("APIError", "Response Code: " + response.code() + ", Message: " + response.message());
-                    Toast.makeText(Befriend.this, "Failed to accept friend request.", Toast.LENGTH_SHORT).show();
+                    Log.e("APIError", "Failed to accept friend request. Code: " + response.code() + ", Message: " + response.message());
+                    Toast.makeText(Befriend.this, "친구 요청 수락 실패.", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseTemplate<BeFriendRequest>> call, Throwable t) {
-                Log.e("APIError", "Failed to handle friend request: " + t.getMessage());
-                Toast.makeText(Befriend.this, "Server error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e("APIError", "Error in accepting friend request: " + t.getMessage());
+                Toast.makeText(Befriend.this, "서버 오류: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -84,28 +82,20 @@ public class Befriend extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
 
                 if (response.isSuccessful() && response.body() != null) {
-                    List<BeFriendRequest> requests = response.body().getResults().getRequests();
-
-                    Log.d("APIResponse", "Received requests: " + requests);
+                    BeFriendResponseList responseList = response.body().getResults();
+                    List<BeFriendRequest> requests = responseList != null ? responseList.getRequests() : new ArrayList<>();
 
                     if (requests != null && !requests.isEmpty()) {
-
-                        List<String> nicknames = new ArrayList<>();
-                        for (BeFriendRequest request : requests) {
-                            nicknames.add(request.getNickname());
-                        }
-
+                        Log.d("APIResponse", "Received friend requests: " + requests.size());
                         befriendRequests.clear();
-                        for (String nickname : nicknames) {
-                            befriendRequests.add(new BeFriendRequest(null, nickname));
-                        }
+                        befriendRequests.addAll(requests);
                         childAdapter.notifyDataSetChanged();
                     } else {
-                        Log.e("APIError", "No requests found");
+                        Log.w("APIResponse", "No friend requests available");
                         Toast.makeText(Befriend.this, "친구 요청이 없습니다.", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Log.e("APIError", "Response Code: " + response.code() + ", Message: " + response.message());
+                    Log.e("APIError", "Failed to load friend requests. Code: " + response.code() + ", Message: " + response.message());
                     Toast.makeText(Befriend.this, "친구 요청 로드 실패.", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -113,11 +103,11 @@ public class Befriend extends AppCompatActivity {
             @Override
             public void onFailure(Call<ResponseTemplate<BeFriendResponseList>> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
+                Log.e("APIError", "Error in loading friend requests: " + t.getMessage());
                 Toast.makeText(Befriend.this, "서버 오류: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
-
 
     private void addRequestToRecyclerView(BeFriendRequest request) {
         befriendRequests.add(request);
