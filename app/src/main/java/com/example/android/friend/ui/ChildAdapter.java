@@ -34,15 +34,11 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        // Get the current BeFriendRequest
         BeFriendRequest currentRequest = requests.get(position);
 
-        // Set the nickname in the TextView
         holder.nicknameTextView.setText(currentRequest.getNickname());
 
-        // Handle the click event
         holder.itemView.setOnClickListener(v -> {
-            // Intent to navigate to Befriend activity (replace Befriend.class with the correct class)
             Intent intent = new Intent(context, Befriend.class);
             intent.putExtra("nickname", currentRequest.getNickname());
             context.startActivity(intent);

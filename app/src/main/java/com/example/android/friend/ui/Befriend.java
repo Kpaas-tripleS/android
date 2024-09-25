@@ -30,8 +30,9 @@ public class Befriend extends AppCompatActivity {
     private RecyclerView friendRequestRecyclerView;
     private BeFriendApi beFriendApi;
     private ChildAdapter childAdapter;
-    private List<BeFriendRequest> befriendRequests = new ArrayList<>(); // 친구 요청을 저장할 리스트
+    private List<BeFriendRequest> befriendRequests = new ArrayList<>();
     private ProgressBar progressBar;
+    private BeFriendRequest beFriendRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +50,30 @@ public class Befriend extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
 
         loadFriendRequests();
+    }
+
+    private void acceptFriendRequests(BeFriendRequest beFriendRequest, int position) {
+        beFriendApi.handleFriendRequest(beFriendRequest).enqueue(new Callback<ResponseTemplate<BeFriendRequest>>() {
+            @Override
+            public void onResponse(Call<ResponseTemplate<BeFriendRequest>> call, Response<ResponseTemplate<BeFriendRequest>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Toast.makeText(Befriend.this, "친구 수락이 완료되었습니다!", Toast.LENGTH_SHORT).show();
+
+                    befriendRequests.remove(position);
+                    childAdapter.notifyItemRemoved(position);
+
+                } else {
+                    Log.e("APIError", "Response Code: " + response.code() + ", Message: " + response.message());
+                    Toast.makeText(Befriend.this, "Failed to accept friend request.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseTemplate<BeFriendRequest>> call, Throwable t) {
+                Log.e("APIError", "Failed to handle friend request: " + t.getMessage());
+                Toast.makeText(Befriend.this, "Server error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void loadFriendRequests() {
@@ -72,7 +97,7 @@ public class Befriend extends AppCompatActivity {
 
                         befriendRequests.clear();
                         for (String nickname : nicknames) {
-                            befriendRequests.add(new BeFriendRequest(null, nickname)); // 새로운 BeFriendRequest 객체 생성
+                            befriendRequests.add(new BeFriendRequest(null, nickname));
                         }
                         childAdapter.notifyDataSetChanged();
                     } else {
