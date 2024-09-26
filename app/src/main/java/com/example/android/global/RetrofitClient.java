@@ -27,7 +27,6 @@ public class RetrofitClient {
     private final RankingAPI rankingAPI;
     private final String BASE_URL = "http://3.39.123.38:8081"; //http://10.0.2.2:8080/
 
-    // RetrofitClient 생성자에 Context를 전달받아 SharedPreferences 사용
     private RetrofitClient(Context context) {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -35,7 +34,6 @@ public class RetrofitClient {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .addInterceptor(loggingInterceptor)
                 .addInterceptor(chain -> {
-                    // SharedPreferences에서 accessToken을 가져옴
                     SharedPreferences sharedPreferences = context.getSharedPreferences("token", Context.MODE_PRIVATE);
                     String accessToken = sharedPreferences.getString("accessToken", null);
                     Log.d("AccessTokenCheck", "Access Token: " + accessToken); // 추가된 로그
@@ -68,7 +66,6 @@ public class RetrofitClient {
         rankingAPI = retrofit.create(RankingAPI.class);
     }
 
-    // Singleton 패턴으로 RetrofitClient 인스턴스를 반환, Context 필요
     public static synchronized RetrofitClient getInstance(Context context) {
         if (instance == null) {
             instance = new RetrofitClient(context);
@@ -81,6 +78,12 @@ public class RetrofitClient {
         return sharedPreferences.getString("accessToken", null);
     }
 
+    public Long getUserId(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("token", Context.MODE_PRIVATE); // 수정된 부분
+        return sharedPreferences.getLong("userId", -1);
+    }
+
+    // Api 모음
     public UserApi getUserApi() {
         return userApi;
     }
@@ -99,5 +102,9 @@ public class RetrofitClient {
 
     public RankingAPI getRankingAPI() {
         return rankingAPI;
+    }
+
+    public UserApi getFindUser() {
+        return userApi;
     }
 }

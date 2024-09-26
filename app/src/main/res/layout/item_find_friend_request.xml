@@ -30,13 +30,13 @@
             android:id="@+id/acceptButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="친구 수락하기" />
+            android:text="대결 신청하기" />
 
         <Button
-            android:id="@+id/declineButton"
+            android:id="@+id/deleteButton"
             android:layout_width="130dp"
             android:layout_height="wrap_content"
-            android:text="거절하기" />
+            android:text="친구 삭제" />
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

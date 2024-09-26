@@ -1,5 +1,7 @@
 package com.example.android.user.ui;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -62,6 +64,7 @@ public class SignUp extends AppCompatActivity {
                             @Override
                             public void onResponse(Call<Void> call, Response<Void> response) {
                                 if (response.isSuccessful()) {
+//                                    saveUserIdToPreferences(name);
                                     Toast.makeText(SignUp.this, "회원가입 성공!", Toast.LENGTH_SHORT).show();
                                 } else {
                                     String errorMessage = "";
@@ -81,5 +84,11 @@ public class SignUp extends AppCompatActivity {
                         });
             }
         });
+    }
+    private void saveUserIdToPreferences(Context context, Long userId) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putLong("userId", userId);
+        editor.apply();
     }
 }
