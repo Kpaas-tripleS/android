@@ -1,9 +1,11 @@
 package com.example.android.friend.ui;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -50,6 +52,24 @@ public class Befriend extends AppCompatActivity {
 
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
+
+        Button findFriendListButton = findViewById(R.id.findFriendList);
+        findFriendListButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Befriend.this, FindFriend.class);
+                startActivity(intent);
+            }
+        });
+
+        Button findFriendButton = findViewById(R.id.findFriend);
+        findFriendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Befriend.this, FindUser.class);
+                startActivity(intent);
+            }
+        });
 
         Long userId = RetrofitClient.getInstance(this).getUserId(this);
         loadFriendRequests(userId);
