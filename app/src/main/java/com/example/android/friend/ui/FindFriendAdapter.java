@@ -18,15 +18,21 @@ public class FindFriendAdapter extends RecyclerView.Adapter<FindFriendAdapter.Vi
     private List<FriendResponse> friends;
     private Context context;
     private OnFriendDeleteListener onFriendDeleteListener;
+    private OnFriendMatchListener onFriendMatchListener;
 
     public interface OnFriendDeleteListener {
         void onDeleteFriend(Long friendId, int position);
     }
 
-    public FindFriendAdapter(List<FriendResponse> friends, Context context, OnFriendDeleteListener onFriendDeleteListener) {
+    public interface OnFriendMatchListener {
+        void onRequestMatch(Long friendId);
+    }
+
+    public FindFriendAdapter(List<FriendResponse> friends, Context context, OnFriendDeleteListener onFriendDeleteListener, OnFriendMatchListener onFriendMatchListener) {
         this.friends = friends;
         this.context = context;
         this.onFriendDeleteListener = onFriendDeleteListener;
+        this.onFriendMatchListener = onFriendMatchListener;
     }
 
     @NonNull
@@ -41,6 +47,10 @@ public class FindFriendAdapter extends RecyclerView.Adapter<FindFriendAdapter.Vi
         FriendResponse friend = friends.get(position);
         holder.nicknameTextView.setText(friend.getName());
 
+        holder.matchRequestButton.setOnClickListener(v -> {
+            onFriendMatchListener.onRequestMatch(friend.getId());
+        });
+
         holder.deleteButton.setOnClickListener(v -> {
             onFriendDeleteListener.onDeleteFriend(friend.getId(), position);
         });
@@ -53,11 +63,13 @@ public class FindFriendAdapter extends RecyclerView.Adapter<FindFriendAdapter.Vi
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView nicknameTextView;
+        Button matchRequestButton;
         Button deleteButton;
 
         public ViewHolder(View itemView) {
             super(itemView);
             nicknameTextView = itemView.findViewById(R.id.nickname);
+            matchRequestButton = itemView.findViewById(R.id.matchRequestButton);
             deleteButton = itemView.findViewById(R.id.deleteButton);
         }
     }

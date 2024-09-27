@@ -28,6 +28,8 @@ import java.util.List;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import ua.naiksoftware.stomp.Stomp;
 import ua.naiksoftware.stomp.dto.StompHeader;
 
@@ -103,6 +105,17 @@ public class MatchActivity extends AppCompatActivity {
             public void onClick(View view) {
                 clickAnswer = true;
                 Call<ResponseTemplate<Void>> call = matchAPI.checkQuizForMatch(matchId, quizzes.get(quizNumber).getQuizId(), quizzes.get(quizNumber).getChoiceOne());
+                call.enqueue(new Callback<ResponseTemplate<Void>>() {
+                    @Override
+                    public void onResponse(Call<ResponseTemplate<Void>> call, Response<ResponseTemplate<Void>> response) {
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseTemplate<Void>> call, Throwable t) {
+
+                    }
+                });
             }
         });
         answer_container_two.setOnClickListener(new View.OnClickListener() {
@@ -110,6 +123,17 @@ public class MatchActivity extends AppCompatActivity {
             public void onClick(View view) {
                 clickAnswer = true;
                 Call<ResponseTemplate<Void>> call = matchAPI.checkQuizForMatch(matchId, quizzes.get(quizNumber).getQuizId(), quizzes.get(quizNumber).getChoiceTwo());
+                call.enqueue(new Callback<ResponseTemplate<Void>>() {
+                    @Override
+                    public void onResponse(Call<ResponseTemplate<Void>> call, Response<ResponseTemplate<Void>> response) {
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseTemplate<Void>> call, Throwable t) {
+
+                    }
+                });
             }
         });
         answer_container_three.setOnClickListener(new View.OnClickListener() {
@@ -117,6 +141,17 @@ public class MatchActivity extends AppCompatActivity {
             public void onClick(View view) {
                 clickAnswer = true;
                 Call<ResponseTemplate<Void>> call = matchAPI.checkQuizForMatch(matchId, quizzes.get(quizNumber).getQuizId(), quizzes.get(quizNumber).getChoiceThree());
+                call.enqueue(new Callback<ResponseTemplate<Void>>() {
+                    @Override
+                    public void onResponse(Call<ResponseTemplate<Void>> call, Response<ResponseTemplate<Void>> response) {
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseTemplate<Void>> call, Throwable t) {
+
+                    }
+                });
             }
         });
         answer_container_four.setOnClickListener(new View.OnClickListener() {
@@ -124,6 +159,17 @@ public class MatchActivity extends AppCompatActivity {
             public void onClick(View view) {
                 clickAnswer = true;
                 Call<ResponseTemplate<Void>> call = matchAPI.checkQuizForMatch(matchId, quizzes.get(quizNumber).getQuizId(), quizzes.get(quizNumber).getChoiceFour());
+                call.enqueue(new Callback<ResponseTemplate<Void>>() {
+                    @Override
+                    public void onResponse(Call<ResponseTemplate<Void>> call, Response<ResponseTemplate<Void>> response) {
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseTemplate<Void>> call, Throwable t) {
+
+                    }
+                });
             }
         });
 
