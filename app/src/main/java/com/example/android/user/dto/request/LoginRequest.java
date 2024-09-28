@@ -13,7 +13,7 @@ public class LoginRequest {
     @SerializedName("password")
     private String password;
 
-    @SerializedName("token") // Add token field
+    @SerializedName("token")
     private String token;
 
     public LoginRequest(String nickname, String email, String password) {

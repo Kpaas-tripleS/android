@@ -1,13 +1,13 @@
 package com.example.android.friend.dto.response;
 
-import com.example.android.friend.dto.request.BeFriendRequest;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
-
 public class BeFriendResponseList {
-    private List<BeFriendRequest> requests;
+    @SerializedName("beFriendResponseList")
+    private List<BeFriendResponse> requests;
 
-    public List<BeFriendRequest> getRequests() {
+    public List<BeFriendResponse> getRequests() {
         return requests;
     }
 }

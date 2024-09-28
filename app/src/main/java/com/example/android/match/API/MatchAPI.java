@@ -5,6 +5,8 @@ import com.example.android.match.dto.request.MatchRequest;
 import com.example.android.match.dto.response.MatchResponseList;
 import com.example.android.match.dto.response.MatchResultResponse;
 
+import java.time.LocalDateTime;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -16,6 +18,9 @@ public interface MatchAPI {
 
     @GET("/matches/friend")
     Call<ResponseTemplate<MatchResponseList>> getMatchList();
+
+    @POST("/matches/{friendId}")
+    Call<Long> friendMatch(@Path("friendId") Long friendId, @Body MatchRequest matchRequest);
 
     @POST("/matches")
     Call<Long> findMatch(@Body MatchRequest matchRequest);

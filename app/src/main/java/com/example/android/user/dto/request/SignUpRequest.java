@@ -27,7 +27,6 @@ public class SignUpRequest {
         this.phone = phone;
     }
 
-    // Getter methods
     public String getName() {
         return name;
     }

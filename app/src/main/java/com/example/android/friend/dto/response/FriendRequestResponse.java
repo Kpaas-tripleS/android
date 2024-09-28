@@ -6,7 +6,7 @@ import java.util.List;
 public class FriendRequestResponse {
 
     @SerializedName("friendRequests")
-    private List<FriendRequest> friendRequests; // 친구 요청 리스트
+    private List<FriendRequest> friendRequests;
 
     public FriendRequestResponse(List<FriendRequest> friendRequests) {
         this.friendRequests = friendRequests;

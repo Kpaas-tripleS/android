@@ -38,7 +38,8 @@ public class Login extends AppCompatActivity {
 
     private UserApi userApi;
 
-    private static final int KAKAO_LOGIN_REQUEST_CODE = 1004; // 요청 코드 정의
+    private static final int KAKAO_LOGIN_REQUEST_CODE = 1004;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +100,7 @@ public class Login extends AppCompatActivity {
                         editor.putString("accessToken", results.getAccessToken());
                         editor.putString("refreshToken", results.getRefreshToken());
                         editor.apply();
+
 
                         Intent intent = new Intent(Login.this, MainActivity.class);
                         startActivity(intent);
