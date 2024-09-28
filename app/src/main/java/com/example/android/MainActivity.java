@@ -13,6 +13,7 @@ import android.view.View;
 
 import com.example.android.friend.ui.Befriend;
 import com.example.android.match.activity.MatchMainActivity;
+import com.example.android.quiz.activity.QuizActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,6 +40,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, Befriend.class);
+                startActivity(intent);
+            }
+        });
+
+        Button goToQuiz = findViewById(R.id.go_to_quiz); // XML에 이 버튼을 추가해야 합니다
+        goToQuiz.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, QuizActivity.class);
                 startActivity(intent);
             }
         });
