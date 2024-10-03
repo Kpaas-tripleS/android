@@ -60,9 +60,8 @@ public class QuizViewModel extends AndroidViewModel {
         });
     }
 
-    public void submitAnswer(Long quizId, Long userId, String answer) {
+    public void submitAnswer(Long quizId,String answer) {
         QuizAnswerDto answerDto = new QuizAnswerDto();
-        answerDto.setUserId(userId);
         answerDto.setAnswer(answer);
 
         quizApi.submitAnswer(quizId, answerDto).enqueue(new Callback<QuizResultDto>() {

@@ -9,15 +9,18 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.Intent;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.android.R;
 import com.example.android.quiz.viewmodel.QuizViewModel;
 import com.example.android.quiz.dto.QuizDto;
+import com.example.android.quiz.dto.QuizResultDto;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class QuizActivity extends AppCompatActivity {
     private QuizViewModel viewModel;
@@ -28,7 +31,6 @@ public class QuizActivity extends AppCompatActivity {
     private int currentQuizIndex = 0;
     private long startTime;
     private List<Long> solvingTimes = new ArrayList<>();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,18 +52,13 @@ public class QuizActivity extends AppCompatActivity {
 
         viewModel.getQuizResult().observe(this, result -> {
             if (result != null) {
-                // Handle quiz result
-                if (result.getIsCorrect()) {
-                    currentQuizIndex++;
-                    if (currentQuizIndex < quizzes.size()) {
-                        displayQuiz(quizzes.get(currentQuizIndex));
-                    } else {
-                        // Quiz completed
-                        // Navigate to result screen
-                    }
-                } else {
-                    // Show error message
-                }
+                handleQuizResult(result);
+            }
+        });
+
+        viewModel.getError().observe(this, error -> {
+            if (error != null) {
+                Toast.makeText(this, error, Toast.LENGTH_LONG).show();
             }
         });
 
@@ -71,7 +68,6 @@ public class QuizActivity extends AppCompatActivity {
 
         Log.d("QuizActivity", "onCreate called");
         Toast.makeText(this, "퀴즈 액티비티 시작", Toast.LENGTH_SHORT).show();
-
     }
 
     private void displayQuiz(QuizDto quiz) {
@@ -81,6 +77,7 @@ public class QuizActivity extends AppCompatActivity {
         ((RadioButton)answerRadioGroup.getChildAt(2)).setText(quiz.getChoiceThree());
         ((RadioButton)answerRadioGroup.getChildAt(3)).setText(quiz.getChoiceFour());
         answerRadioGroup.clearCheck();
+        startTimer();
     }
 
     private void submitAnswer() {
@@ -88,24 +85,54 @@ public class QuizActivity extends AppCompatActivity {
         if (selectedId != -1) {
             RadioButton selectedButton = findViewById(selectedId);
             String answer = selectedButton.getText().toString();
-            viewModel.submitAnswer(quizzes.get(currentQuizIndex).getQuizId(), 1L, answer);
+            viewModel.submitAnswer(quizzes.get(currentQuizIndex).getQuizId(), answer);
+            stopTimerAndSave();
+        } else {
+            Toast.makeText(this, "답변을 선택해주세요.", Toast.LENGTH_SHORT).show();
         }
     }
 
-    // 타이머 종료 및 시간 저장
+    private void handleQuizResult(QuizResultDto result) {
+        if (result.getIsCorrect()) {
+            currentQuizIndex++;
+            if (currentQuizIndex < quizzes.size()) {
+                displayQuiz(quizzes.get(currentQuizIndex));
+            } else {
+                finishQuiz();
+            }
+        } else {
+            Toast.makeText(this, "틀렸습니다. 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void startTimer() {
+        startTime = SystemClock.elapsedRealtime();
+    }
+
     private void stopTimerAndSave() {
         long endTime = SystemClock.elapsedRealtime();
         long solvingTime = (endTime - startTime) / 1000; // 밀리초를 초 단위로 변환
         solvingTimes.add(solvingTime);
     }
 
-    private double calculateAverageTime() {  //QuizResultActivity로 전달
+    private double calculateAverageTime() {
+        if (solvingTimes.isEmpty()) return 0;
         long sum = 0;
         for (Long time : solvingTimes) {
             sum += time;
         }
-        double average = (double) sum / solvingTimes.size(); // 평균을 double 타입으로 계산
+        double average = (double) sum / solvingTimes.size();
         return Math.round(average * 10) / 10.0; // 소수점 한자리까지 반올림
     }
 
+    private void finishQuiz() {
+        double averageTime = calculateAverageTime();
+        // 여기에 QuizResultActivity로 이동하는 코드 추가
+        Intent intent = new Intent(this, QuizResultActivity.class);
+        intent.putExtra("averageTime", (float)averageTime);
+        intent.putExtra("correctAnswers", (int)currentQuizIndex);
+        intent.putExtra("totalQuestions", quizzes.size());
+        startActivity(intent);
+        finish();
+    }
 }
