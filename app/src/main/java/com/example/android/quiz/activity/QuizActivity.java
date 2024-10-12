@@ -64,6 +64,7 @@ public class QuizActivity extends AppCompatActivity {
                 quizzes = quizList;
                 progressBar.setMax(quizzes.size());
                 displayQuiz(quizzes.get(currentQuizIndex));
+                updateProgress();  // 추가된 부분
             }
         });
 
@@ -136,8 +137,9 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     private void updateProgress() {
-        progressTextView.setText(currentQuizIndex + "/" + quizzes.size());
-        progressBar.setProgress(currentQuizIndex);
+        progressTextView.setText((currentQuizIndex + 1) + "/" + quizzes.size());
+        progressBar.setMax(quizzes.size());
+        progressBar.setProgress(currentQuizIndex + 1);
     }
 
     private void startTimer() {
