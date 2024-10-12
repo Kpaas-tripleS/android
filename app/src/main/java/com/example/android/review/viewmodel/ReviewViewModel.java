@@ -16,6 +16,7 @@ public class ReviewViewModel extends AndroidViewModel {
     private ReviewApi reviewApi;
     private MutableLiveData<ReviewDto> reviewSession = new MutableLiveData<>();
     private MutableLiveData<String> error = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
 
     public ReviewViewModel(Application application) {
         super(application);
@@ -30,25 +31,35 @@ public class ReviewViewModel extends AndroidViewModel {
         return error;
     }
 
+    public LiveData<Boolean> getIsLoading() {
+        return isLoading;
+    }
+
     public void createRandomReviewSession(String difficulty) {
+        isLoading.setValue(true);
         reviewApi.createRandomReviewSession(difficulty).enqueue(new Callback<ReviewDto>() {
             @Override
             public void onResponse(Call<ReviewDto> call, Response<ReviewDto> response) {
+                isLoading.setValue(false);
                 if (response.isSuccessful() && response.body() != null) {
                     reviewSession.setValue(response.body());
                 } else {
                     error.setValue("리뷰 세션 생성 실패: " + response.code());
+                    reviewSession.setValue(new ReviewDto()); // 빈 ReviewDto 설정
                 }
             }
 
             @Override
             public void onFailure(Call<ReviewDto> call, Throwable t) {
+                isLoading.setValue(false);
                 error.setValue("네트워크 오류: " + t.getMessage());
+                reviewSession.setValue(new ReviewDto()); // 빈 ReviewDto 설정
             }
         });
     }
 
     public void submitReviewAnswer(Long quizId, String answer) {
+        isLoading.setValue(true);
         QuizAnswerDto answerDto = new QuizAnswerDto();
         answerDto.setUserId(getUserId());
         answerDto.setAnswer(answer);
@@ -56,9 +67,8 @@ public class ReviewViewModel extends AndroidViewModel {
         reviewApi.submitReviewAnswer(quizId, answerDto).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
+                isLoading.setValue(false);
                 if (response.isSuccessful()) {
-                    // 답변 제출 성공 처리
-                    // 예: 다음 문제로 넘어가거나, 리뷰 세션 업데이트
                     updateReviewSession();
                 } else {
                     error.setValue("답변 제출 실패: " + response.code());
@@ -67,6 +77,7 @@ public class ReviewViewModel extends AndroidViewModel {
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
+                isLoading.setValue(false);
                 error.setValue("네트워크 오류: " + t.getMessage());
             }
         });
@@ -77,13 +88,29 @@ public class ReviewViewModel extends AndroidViewModel {
     }
 
     private void updateReviewSession() {
-        // 현재 리뷰 세션의 상태를 업데이트하는 로직
-        // 예: 다음 문제로 넘어가기, 점수 업데이트 등
         ReviewDto currentSession = reviewSession.getValue();
-        if (currentSession != null) {
-            // 여기에 업데이트 로직 구현
-            // 예: currentSession.moveToNextQuestion();
-            reviewSession.setValue(currentSession);
+        if (currentSession != null && currentSession.getQuizResults() != null) {
+            int currentIndex = getCurrentQuestionIndex();
+            if (currentIndex < currentSession.getQuizResults().size() - 1) {
+                // 다음 문제로 이동
+                currentIndex++;
+            } else {
+                // 모든 문제를 다 풀었을 경우
+                error.setValue("모든 문제를 다 풀었습니다.");
+            }
+            reviewSession.setValue(currentSession); // UI 업데이트를 위해 setValue 호출
         }
+    }
+
+    private int getCurrentQuestionIndex() {
+        ReviewDto currentSession = reviewSession.getValue();
+        if (currentSession != null && currentSession.getQuizResults() != null) {
+            for (int i = 0; i < currentSession.getQuizResults().size(); i++) {
+                if (currentSession.getQuizResults().get(i).getUserAnswer() == null) {
+                    return i;
+                }
+            }
+        }
+        return 0; // 기본값으로 첫 번째 문제 반환
     }
 }
