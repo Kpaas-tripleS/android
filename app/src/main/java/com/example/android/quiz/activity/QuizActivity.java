@@ -1,9 +1,12 @@
 package com.example.android.quiz.activity;
 
+import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -29,11 +32,14 @@ public class QuizActivity extends AppCompatActivity {
     private TextView timerTextView;
     private TextView progressTextView;
     private ProgressBar progressBar;
+    private ImageView timeAlien;
+    private ImageView timeBlank;
     private List<QuizDto> quizzes;
     private int currentQuizIndex = 0;
     private List<Integer> solvingTimes = new ArrayList<>();
     private int elapsedTime = 0;
     private Handler handler = new Handler();
+    private ValueAnimator animator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +54,10 @@ public class QuizActivity extends AppCompatActivity {
         timerTextView = findViewById(R.id.timerTextView);
         progressTextView = findViewById(R.id.progressTextView);
         progressBar = findViewById(R.id.progressBar);
+        timeAlien = findViewById(R.id.time_alien);
+        timeBlank = findViewById(R.id.time_blank);
+
+        setupAnimation();
 
         viewModel.getQuizzes().observe(this, quizList -> {
             if (quizList != null && !quizList.isEmpty()) {
@@ -76,6 +86,40 @@ public class QuizActivity extends AppCompatActivity {
         startTimer();
     }
 
+    private void setupAnimation() {
+        final float startX = 0f;
+        final float endX = getResources().getDisplayMetrics().widthPixels - timeAlien.getWidth();
+
+        animator = ValueAnimator.ofFloat(startX, endX);
+        animator.setDuration(30000); // 30초 동안 이동
+        animator.setInterpolator(new LinearInterpolator());
+        animator.setRepeatCount(ValueAnimator.INFINITE);
+        animator.setRepeatMode(ValueAnimator.RESTART);
+
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float animatedValue = (float) animation.getAnimatedValue();
+                timeAlien.setTranslationX(animatedValue);
+                timeBlank.setTranslationX(animatedValue);
+            }
+        });
+    }
+
+    private void startAnimation() {
+        if (animator != null && !animator.isStarted()) {
+            animator.start();
+        }
+    }
+
+    private void resetAnimation() {
+        if (animator != null) {
+            animator.cancel();
+            timeAlien.setTranslationX(0);
+            timeBlank.setTranslationX(0);
+        }
+    }
+
     private void displayQuiz(QuizDto quiz) {
         questionText.setText(quiz.getQuestion());
         ((RadioButton)answerRadioGroup.getChildAt(0)).setText(quiz.getChoiceOne());
@@ -83,6 +127,9 @@ public class QuizActivity extends AppCompatActivity {
         ((RadioButton)answerRadioGroup.getChildAt(2)).setText(quiz.getChoiceThree());
         ((RadioButton)answerRadioGroup.getChildAt(3)).setText(quiz.getChoiceFour());
         answerRadioGroup.clearCheck();
+
+        resetAnimation();
+        startAnimation();
 
         currentQuizIndex++;
         updateProgress();
@@ -107,6 +154,8 @@ public class QuizActivity extends AppCompatActivity {
     private void submitAnswer() {
         int selectedId = answerRadioGroup.getCheckedRadioButtonId();
         if (selectedId != -1) {
+            resetAnimation();  // 애니메이션을 중지하고 초기 위치로 돌립니다.
+
             RadioButton selectedButton = findViewById(selectedId);
             String answer = selectedButton.getText().toString();
             viewModel.submitAnswer(quizzes.get(currentQuizIndex - 1).getQuizId(), answer);
@@ -126,6 +175,7 @@ public class QuizActivity extends AppCompatActivity {
             }
         } else {
             Toast.makeText(this, "틀렸습니다. 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
+            startAnimation();  // 틀렸을 경우 애니메이션을 다시 시작합니다.
         }
     }
 
@@ -140,6 +190,7 @@ public class QuizActivity extends AppCompatActivity {
 
     private void finishQuiz() {
         handler.removeCallbacksAndMessages(null);
+        resetAnimation();
         double averageTime = calculateAverageTime();
         Intent intent = new Intent(this, QuizResultActivity.class);
         intent.putExtra("averageTime", (float)averageTime);
@@ -153,5 +204,6 @@ public class QuizActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         handler.removeCallbacksAndMessages(null);
+        resetAnimation();
     }
 }
