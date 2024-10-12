@@ -55,7 +55,7 @@ public class QuizActivity extends AppCompatActivity {
         progressTextView = findViewById(R.id.progressTextView);
         progressBar = findViewById(R.id.progressBar);
         timeAlien = findViewById(R.id.time_alien);
-        timeBlank = findViewById(R.id.time_blank);
+        //timeBlank = findViewById(R.id.time_blank);
 
         setupAnimation();
 
@@ -64,7 +64,6 @@ public class QuizActivity extends AppCompatActivity {
                 quizzes = quizList;
                 progressBar.setMax(quizzes.size());
                 displayQuiz(quizzes.get(currentQuizIndex));
-                updateProgress();  // 추가된 부분
             }
         });
 
@@ -137,9 +136,8 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     private void updateProgress() {
-        progressTextView.setText((currentQuizIndex + 1) + "/" + quizzes.size());
-        progressBar.setMax(quizzes.size());
-        progressBar.setProgress(currentQuizIndex + 1);
+        progressTextView.setText(currentQuizIndex + "/" + quizzes.size());
+        progressBar.setProgress(currentQuizIndex);
     }
 
     private void startTimer() {

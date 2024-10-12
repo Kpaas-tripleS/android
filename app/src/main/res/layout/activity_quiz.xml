@@ -8,83 +8,54 @@
     tools:context=".quiz.activity.QuizActivity">
 
     <TextView
+        android:id="@+id/timerTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="지금 0초가 지나고 있어요"
+        android:textSize="18sp"
+        android:textColor="@android:color/white"
+        android:layout_margin="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
         android:id="@+id/progressTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="1/5"
         android:textSize="18sp"
+        android:textColor="@android:color/white"
         android:layout_margin="16dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        app:layout_constraintTop_toBottomOf="@id/progressTextView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/timerLayout"
+    <FrameLayout
+        android:id="@+id/timerContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/progressBar">
+        app:layout_constraintTop_toBottomOf="@id/timerTextView">
 
         <ImageView
             android:id="@+id/time_alien"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/time_emogi"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="@id/time_line" />
+            android:src="@drawable/time_emogi" />
 
-        <ImageView
-            android:id="@+id/time_blank"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginStart="8dp"
-            android:src="@drawable/time_blank"
-            app:layout_constraintStart_toEndOf="@id/time_alien"
-            app:layout_constraintTop_toTopOf="@id/time_alien"
-            app:layout_constraintBottom_toBottomOf="@id/time_line" />
-
-        <TextView
-            android:id="@+id/timerTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0초"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@id/time_blank"
-            app:layout_constraintEnd_toEndOf="@id/time_blank"
-            app:layout_constraintHorizontal_bias="0.545"
-            app:layout_constraintStart_toStartOf="@id/time_blank"
-            app:layout_constraintTop_toTopOf="@id/time_blank"
-            app:layout_constraintVertical_bias="0.235" />
-
-        <ImageView
+        <View
             android:id="@+id/time_line"
-            android:layout_width="0dp"
-            android:layout_height="30dp"
-            android:layout_marginTop="40dp"
-            android:scaleType="fitXY"
-            android:src="@drawable/time_line"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_gravity="bottom"
+            android:background="@android:color/holo_green_light" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
 
     <ScrollView
         android:id="@+id/scrollView_main"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/timerLayout"
+        app:layout_constraintTop_toBottomOf="@id/timerContainer"
         app:layout_constraintBottom_toTopOf="@id/submitButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -157,6 +128,7 @@
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="16dp"
         android:text="제출"
+        android:backgroundTint="@android:color/holo_purple"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
