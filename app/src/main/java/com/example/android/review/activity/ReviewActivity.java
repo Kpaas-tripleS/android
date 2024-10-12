@@ -1,6 +1,7 @@
 package com.example.android.review.activity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -45,21 +46,37 @@ public class ReviewActivity extends AppCompatActivity {
     }
 
     private void updateUI(ReviewDto reviewDto) {
-        if (reviewDto != null && reviewDto.getQuizResults() != null && !reviewDto.getQuizResults().isEmpty()) {
-            QuizResultDto currentQuizResult = reviewDto.getQuizResults().get(currentQuizIndex);
-            if (currentQuizResult != null) {
-                QuizDto currentQuiz = currentQuizResult.getQuiz();
-                if (currentQuiz != null) {
+        try {
+            if (reviewDto != null && reviewDto.getQuizResults() != null && !reviewDto.getQuizResults().isEmpty()) {
+                QuizResultDto currentQuizResult = reviewDto.getQuizResults().get(currentQuizIndex);
+                if (currentQuizResult != null && currentQuizResult.getQuiz() != null) {
+                    QuizDto currentQuiz = currentQuizResult.getQuiz();
+
                     questionText.setText(currentQuiz.getQuestion());
 
-                    ((RadioButton)answerRadioGroup.getChildAt(0)).setText(currentQuiz.getChoiceOne());
-                    ((RadioButton)answerRadioGroup.getChildAt(1)).setText(currentQuiz.getChoiceTwo());
-                    ((RadioButton)answerRadioGroup.getChildAt(2)).setText(currentQuiz.getChoiceThree());
-                    ((RadioButton)answerRadioGroup.getChildAt(3)).setText(currentQuiz.getChoiceFour());
+                    if (answerRadioGroup.getChildCount() >= 4) {
+                        ((RadioButton)answerRadioGroup.getChildAt(0)).setText(currentQuiz.getChoiceOne());
+                        ((RadioButton)answerRadioGroup.getChildAt(1)).setText(currentQuiz.getChoiceTwo());
+                        ((RadioButton)answerRadioGroup.getChildAt(2)).setText(currentQuiz.getChoiceThree());
+                        ((RadioButton)answerRadioGroup.getChildAt(3)).setText(currentQuiz.getChoiceFour());
+                    } else {
+                        Log.e("ReviewActivity", "Not enough RadioButtons in answerRadioGroup");
+                    }
 
-                    wrongCountText.setText(String.format("지금까지 틀린 횟수: %d", currentQuizResult.getWrongCount()));
+                    if (wrongCountText != null) {
+                        wrongCountText.setText(String.format("지금까지 틀린 횟수: %d", currentQuizResult.getWrongCount()));
+                    } else {
+                        Log.e("ReviewActivity", "wrongCountText is null");
+                    }
+                } else {
+                    Log.e("ReviewActivity", "currentQuizResult or its quiz is null");
                 }
+            } else {
+                Log.e("ReviewActivity", "ReviewDto or QuizResults is null or empty");
             }
+        } catch (Exception e) {
+            Log.e("ReviewActivity", "Error updating UI: " + e.getMessage(), e);
+            Toast.makeText(this, "UI 업데이트 중 오류 발생", Toast.LENGTH_SHORT).show();
         }
     }
 
