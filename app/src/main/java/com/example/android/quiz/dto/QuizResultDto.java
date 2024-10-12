@@ -9,19 +9,69 @@ public class QuizResultDto {
     private Boolean isCorrect;
     private LocalDateTime answeredAt;
     private Long resultId;
+    private long wrongCount;
+    private QuizDto quiz;
 
     // Getters and setters
-    public Long getQuizId() { return quizId; }
-    public void setQuizId(Long quizId) { this.quizId = quizId; }
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
-    public String getUserAnswer() { return userAnswer; }
-    public void setUserAnswer(String userAnswer) { this.userAnswer = userAnswer; }
-    public Boolean getIsCorrect() { return isCorrect; }
-    public void setIsCorrect(Boolean correct) { isCorrect = correct; }
-    public LocalDateTime getAnsweredAt() { return answeredAt; }
-    public void setAnsweredAt(LocalDateTime answeredAt) { this.answeredAt = answeredAt; }
-    public Long getResultId() { return resultId; }
-    public void setResultId(Long resultId) { this.resultId = resultId; }
+    public Long getQuizId() {
+        return quizId;
+    }
+    public void setQuizId(Long quizId) {
+        this.quizId = quizId;
+    }
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public String getUserAnswer() {
+        return userAnswer;
+    }
+    public void setUserAnswer(String userAnswer) {
+        this.userAnswer = userAnswer;
+    }
+
+    public Boolean getIsCorrect() {
+        return isCorrect;
+    }
+
+    public void setIsCorrect(Boolean correct) {
+        isCorrect = correct;
+    }
+
+    public LocalDateTime getAnsweredAt() {
+        return answeredAt;
+    }
+
+    public void setAnsweredAt(LocalDateTime answeredAt) {
+        this.answeredAt = answeredAt;
+    }
+
+    public Long getResultId() {
+        return resultId;
+    }
+
+    public void setResultId(Long resultId) {
+        this.resultId = resultId;
+    }
+
+    public long getWrongCount() {
+        return wrongCount;
+    }
+
+    public void setWrongCount(long wrongCount) {
+        this.wrongCount = wrongCount;
+    }
+
+    public QuizDto getQuiz() {
+        return quiz;
+    }
+
+    public void setQuiz(QuizDto quiz) {
+        this.quiz = quiz;
+    }
 
 }

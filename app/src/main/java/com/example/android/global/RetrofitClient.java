@@ -9,6 +9,7 @@ import com.example.android.friend.api.FriendApi;
 import com.example.android.quiz.api.QuizApi;
 import com.example.android.match.API.MatchAPI;
 import com.example.android.match.API.RankingAPI;
+import com.example.android.review.api.ReviewApi;
 import com.example.android.user.api.UserApi;
 
 import okhttp3.OkHttpClient;
@@ -27,6 +28,7 @@ public class RetrofitClient {
     private final QuizApi quizApi;
     private final MatchAPI matchAPI;
     private final RankingAPI rankingAPI;
+    private final ReviewApi reviewApi;
     private final String BASE_URL = "http://3.39.123.38:8081"; //http://10.0.2.2:8080/
 
     private RetrofitClient(Context context) {
@@ -67,6 +69,7 @@ public class RetrofitClient {
         quizApi = retrofit.create(QuizApi.class);
         matchAPI = retrofit.create(MatchAPI.class);
         rankingAPI = retrofit.create(RankingAPI.class);
+        reviewApi = retrofit.create(ReviewApi.class);
     }
 
     public static synchronized RetrofitClient getInstance(Context context) {
@@ -114,6 +117,7 @@ public class RetrofitClient {
     public UserApi getFindUser() {
         return userApi;
     }
+    public ReviewApi getReviewApi() {return reviewApi;}
 
 }
 
