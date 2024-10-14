@@ -1,7 +1,5 @@
 package com.example.android.friend.ui;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.android.R;
-import com.example.android.friend.dto.request.BeFriendRequest;
 import com.example.android.friend.dto.response.BeFriendResponse;
 
 import java.util.List;
@@ -20,7 +17,6 @@ import java.util.List;
 public class BeFriendAdapter extends RecyclerView.Adapter<BeFriendAdapter.ViewHolder> {
     private List<BeFriendResponse> requests;
     private Befriend befriend;
-    private BeFriendRequest beFriendRequest;
 
     public BeFriendAdapter(List<BeFriendResponse> requests, Befriend befriend) {
         this.requests = requests;
@@ -41,14 +37,15 @@ public class BeFriendAdapter extends RecyclerView.Adapter<BeFriendAdapter.ViewHo
         holder.nicknameTextView.setText(beFriendResponse.getNickname());
 
         Long requesterId = beFriendResponse.getRequesterId();
-        Long userId = getUserIdFromPreferences(holder.itemView.getContext());
 
         holder.acceptButton.setOnClickListener(v -> {
-            BeFriendRequest beFriendRequest = new BeFriendRequest(1L, requesterId, true);
-            befriend.acceptFriendRequests(beFriendRequest, position);
+            befriend.acceptFriendRequests(requesterId, position);
+        });
+
+        holder.declineButton.setOnClickListener(v -> {
+            befriend.rejectFriendRequests(requesterId, position);
         });
     }
-
 
     @Override
     public int getItemCount() {
@@ -58,15 +55,13 @@ public class BeFriendAdapter extends RecyclerView.Adapter<BeFriendAdapter.ViewHo
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView nicknameTextView;
         Button acceptButton;
+        Button declineButton;
 
         public ViewHolder(View itemView) {
             super(itemView);
             nicknameTextView = itemView.findViewById(R.id.nickname);
             acceptButton = itemView.findViewById(R.id.acceptButton);
+            declineButton = itemView.findViewById(R.id.declineButton);
         }
-    }
-    private Long getUserIdFromPreferences(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("MyAppPreferences", Context.MODE_PRIVATE);
-        return sharedPreferences.getLong("userId", -1);
     }
 }

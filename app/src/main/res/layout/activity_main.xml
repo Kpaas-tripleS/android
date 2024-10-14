@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -14,9 +15,7 @@
         android:layout_height="wrap_content"
         android:background="@null"
         android:src="@drawable/main_profile"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.066"
@@ -34,7 +33,6 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@id/main_profile"
         app:layout_constraintEnd_toEndOf="@id/main_profile"
-        app:layout_constraintHorizontal_bias="0.63"
         app:layout_constraintStart_toStartOf="@id/main_profile"
         app:layout_constraintTop_toTopOf="@id/main_profile"
         app:layout_constraintVertical_bias="0.466" />
@@ -46,7 +44,6 @@
         android:src="@drawable/main_saying"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.357"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.358" />
@@ -64,7 +61,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-
     <ImageView
         android:id="@+id/main_study"
         android:layout_width="wrap_content"
@@ -72,7 +68,6 @@
         android:src="@drawable/main_study"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.273"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.542" />
@@ -85,7 +80,6 @@
         android:src="@drawable/main_quiz_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.316"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.633"
@@ -99,7 +93,6 @@
         android:src="@drawable/main_review_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.699"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.633"
@@ -113,32 +106,23 @@
         android:src="@drawable/main_news_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.513"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.755"
         tools:ignore="SpeakableTextPresentCheck" />
 
-    <Button
-        android:id="@+id/go_to_match"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="매치임시버튼"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.95"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.875" />
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="22dp"
+        tools:layout_editor_absoluteY="197dp" />
 
-    <Button
-        android:id="@+id/go_to_quiz"
-        android:layout_width="wrap_content"
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="퀴즈 풀기"
-        app:layout_constraintTop_toBottomOf="@id/go_to_match"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/main"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

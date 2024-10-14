@@ -28,6 +28,7 @@ public class RetrofitClient {
     private final MatchAPI matchAPI;
     private final RankingAPI rankingAPI;
     private final String BASE_URL = "http://3.39.123.38:8081"; //http://10.0.2.2:8080/
+//    private final String BASE_URL = "http://10.0.2.2:8081/";
 
     private RetrofitClient(Context context) {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
@@ -79,11 +80,6 @@ public class RetrofitClient {
     public String getAccessToken(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("token", Context.MODE_PRIVATE);
         return sharedPreferences.getString("accessToken", null);
-    }
-
-    public Long getUserId(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("token", Context.MODE_PRIVATE); // 수정된 부분
-        return sharedPreferences.getLong("userId", -1);
     }
 
     // Api 모음

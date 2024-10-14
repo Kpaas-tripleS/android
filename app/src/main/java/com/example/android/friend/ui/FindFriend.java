@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -28,7 +27,6 @@ import com.example.android.match.dto.request.MatchRequest;
 import com.example.android.match.dto.response.MatchStartResponse;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSyntaxException;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -159,7 +157,7 @@ public class FindFriend extends AppCompatActivity implements FindFriendAdapter.O
                 } else {
                     Toast.makeText(FindFriend.this, "친구 삭제 실패. 다시 시도해 주세요.", Toast.LENGTH_SHORT).show();
                 }
-            }
+        }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {

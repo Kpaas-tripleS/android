@@ -12,11 +12,13 @@ import retrofit2.http.Query;
 
 public interface BeFriendApi {
     @POST("/be-friends/request")
-    Call<Void> sendFriendRequest(@Body BeFriendRequest beFriendRequest);
+    Call<ResponseTemplate<Void>> sendFriendRequest(@Body BeFriendRequest beFriendRequest);
 
     @GET("/be-friends")
     Call<ResponseTemplate<BeFriendResponseList>> getFriendRequestList(@Query("userId") Long userId);
 
     @POST("/be-friends")
     Call<ResponseTemplate<BeFriendRequest>> handleFriendRequest(@Body BeFriendRequest beFriendRequest);
+
+
 }

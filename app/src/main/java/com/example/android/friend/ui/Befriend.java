@@ -54,29 +54,22 @@ public class Befriend extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
 
         Button findFriendListButton = findViewById(R.id.findFriendList);
-        findFriendListButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Befriend.this, FindFriend.class);
-                startActivity(intent);
-            }
+        findFriendListButton.setOnClickListener(v -> {
+            Intent intent = new Intent(Befriend.this, FindFriend.class);
+            startActivity(intent);
         });
 
         Button findFriendButton = findViewById(R.id.findFriend);
-        findFriendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Befriend.this, FindUser.class);
-                startActivity(intent);
-            }
+        findFriendButton.setOnClickListener(v -> {
+            Intent intent = new Intent(Befriend.this, FindUser.class);
+            startActivity(intent);
         });
 
-        Long userId = RetrofitClient.getInstance(this).getUserId(this);
-        loadFriendRequests(userId);
+        loadFriendRequests(3L);
     }
 
-    void acceptFriendRequests(BeFriendRequest beFriendRequest, int position) {
-
+    public void acceptFriendRequests(Long requesterId, int position) {
+        BeFriendRequest beFriendRequest = new BeFriendRequest(3L, requesterId, true);
         Log.d("AcceptRequest", "Sending request to accept friend request: " + beFriendRequest.toString());
 
         beFriendApi.handleFriendRequest(beFriendRequest).enqueue(new Callback<ResponseTemplate<BeFriendRequest>>() {
@@ -87,25 +80,35 @@ public class Befriend extends AppCompatActivity {
                     beFriendResponses.remove(position);
                     beFriendAdapter.notifyItemRemoved(position);
                 } else {
-                    Log.e("APIError", "친구 요청 실패. 코드: " + response.code() + ", 메시지: " + response.message());
-
-                    if (response.errorBody() != null) {
-                        try {
-                            String errorBody = response.errorBody().string();
-                            Log.e("request_APIError", "Error body: " + errorBody);
-                            Toast.makeText(Befriend.this, "친구 요청 수락 실패: " + errorBody, Toast.LENGTH_SHORT).show();
-                        } catch (Exception e) {
-                            Log.e("request_APIError", "Error parsing error body", e);
-                            Toast.makeText(Befriend.this, "친구 요청 수락 실패. 서버 오류.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
+                    handleApiError(response);
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseTemplate<BeFriendRequest>> call, Throwable t) {
-                Log.e("request_APIError", "Error in accepting friend request: " + t.getMessage());
-                Toast.makeText(Befriend.this, "서버 오류: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                handleApiFailure(t);
+            }
+        });
+    }
+
+    public void rejectFriendRequests(Long requesterId, int position) {
+        beFriendApi.handleFriendRequest(new BeFriendRequest(3L, requesterId, false)).enqueue(new Callback<ResponseTemplate<BeFriendRequest>>() {
+            @Override
+            public void onResponse(Call<ResponseTemplate<BeFriendRequest>> call, Response<ResponseTemplate<BeFriendRequest>> response) {
+                Log.d("RejectRequest", "Response code: " + response.code() + ", Message: " + response.message());
+
+                if (response.isSuccessful() && response.body() != null) {
+                    Toast.makeText(Befriend.this, "친구 요청이 거절되었습니다.", Toast.LENGTH_SHORT).show();
+                    beFriendResponses.remove(position);
+                    beFriendAdapter.notifyItemRemoved(position);
+                } else {
+                    handleApiError(response);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseTemplate<BeFriendRequest>> call, Throwable t) {
+                handleApiFailure(t);
             }
         });
     }
@@ -132,17 +135,34 @@ public class Befriend extends AppCompatActivity {
                         Toast.makeText(Befriend.this, "친구 요청이 없습니다.", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Log.e("APIError", "Failed to load friend requests. Code: " + response.code() + ", Message: " + response.message());
-                    Toast.makeText(Befriend.this, "친구 요청 로드 실패.", Toast.LENGTH_SHORT).show();
+                    handleApiError(response);
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseTemplate<BeFriendResponseList>> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
-                Log.e("APIError", "Error in loading friend requests: " + t.getMessage());
-                Toast.makeText(Befriend.this, "서버 오류: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                handleApiFailure(t);
             }
         });
+    }
+
+    private void handleApiError(Response<?> response) {
+        Log.e("APIError", "API error. Code: " + response.code() + ", Message: " + response.message());
+        if (response.errorBody() != null) {
+            try {
+                String errorBody = response.errorBody().string();
+                Log.e("request_APIError", "Error body: " + errorBody);
+                Toast.makeText(Befriend.this, "오류 발생: " + errorBody, Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                Log.e("request_APIError", "Error parsing error body", e);
+                Toast.makeText(Befriend.this, "서버 오류.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void handleApiFailure(Throwable t) {
+        Log.e("request_APIError", "API failure: " + t.getMessage());
+        Toast.makeText(Befriend.this, "서버 오류: " + t.getMessage(), Toast.LENGTH_SHORT).show();
     }
 }

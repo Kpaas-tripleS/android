@@ -16,6 +16,10 @@ android {
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
 
+    buildFeatures {
+        viewBinding true  // View Binding 활성화
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -51,10 +55,12 @@ dependencies {
     // Kakao SDK 의존성
     implementation 'com.kakao.sdk:v2-user:2.11.0'  // Use the latest version
 
-    //retrofit
+    // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
+
+    implementation 'com.google.android.material:material:1.6.1'
 
     implementation "com.kakao.sdk:v2-all:2.20.6" // 전체 모듈 설치, 2.11.0 버전부터 지원
     implementation "com.kakao.sdk:v2-user:2.20.6" // 카카오 로그인 API 모듈
@@ -64,17 +70,16 @@ dependencies {
     implementation "com.kakao.sdk:v2-navi:2.20.6" // 카카오내비 API 모듈
     implementation "com.kakao.sdk:v2-cert:2.20.6" // 카카오톡 인증 서비스 API 모듈
 
-
     def lifecycle_version = "2.5.1"
 
-// ViewModel
+    // ViewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
-// LiveData
+    // LiveData
     implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
-// Lifecycles only (without ViewModel or LiveData)
+    // Lifecycles only (without ViewModel or LiveData)
     implementation "androidx.lifecycle:lifecycle-runtime:$lifecycle_version"
-// Saved state module for ViewModel
+    // Saved state module for ViewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version"
-// Annotation processor
+    // Annotation processor
     annotationProcessor "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
 }
